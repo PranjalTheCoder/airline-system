@@ -30,4 +30,5 @@ public class AirlineController {
     public List<Airline> getAll() {
         return service.getAllAirlines();
     }
+    
 }

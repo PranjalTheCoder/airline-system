@@ -24,4 +24,6 @@ public class AirlineService {
     public List<Airline> getAllAirlines() {
         return repository.findAll();
     }
+
+	
 }
