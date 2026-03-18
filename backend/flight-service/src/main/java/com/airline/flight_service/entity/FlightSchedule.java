@@ -2,6 +2,7 @@ package com.airline.flight_service.entity;
 
 import java.time.LocalTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,6 +25,9 @@ public class FlightSchedule {
 
     private LocalTime departureTime;
     private LocalTime arrivalTime;
+    
+    @Column(name="is_active")
+    private Boolean active = true;
 
 //    private String daysOfOperation;
 //    private LocalDate effectiveFrom;
@@ -55,6 +59,9 @@ public class FlightSchedule {
 
     public LocalTime getArrivalTime() { return arrivalTime; }
     public void setArrivalTime(LocalTime arrivalTime) { this.arrivalTime = arrivalTime; }
+    
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 
 //    public String getDaysOfOperation() { return daysOfOperation; }
 //    public void setDaysOfOperation(String daysOfOperation) { this.daysOfOperation = daysOfOperation; }

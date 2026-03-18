@@ -17,7 +17,14 @@ public class FlightInstance {
     private FlightSchedule schedule;
 
     private LocalDate departureDate;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private FlightStatusEnum status;
+    
+    @ManyToOne
+    @JoinColumn(name = "gate_id")
+    private Gate gate;
+
+    private String terminal;
 
 //    private LocalDateTime actualDeparture;
 //    private LocalDateTime actualArrival;
@@ -29,11 +36,13 @@ public class FlightInstance {
     public FlightInstance() {}
 
     public FlightInstance(Long id, FlightSchedule schedule, LocalDate departureDate,
-                          String status) {
+    		FlightStatusEnum status, Gate gate, String terminal) {
         this.id = id;
         this.schedule = schedule;
         this.departureDate = departureDate;
         this.status = status;
+        this.gate = gate;
+        this.terminal = terminal;
 //        this.actualDeparture = actualDeparture;
 //        this.actualArrival = actualArrival;
 //        this.gate = gate;
@@ -50,8 +59,14 @@ public class FlightInstance {
     public LocalDate getDepartureDate() { return departureDate; }
     public void setDepartureDate(LocalDate departureDate) { this.departureDate = departureDate; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public FlightStatusEnum getStatus() { return status; }
+    public void setStatus(FlightStatusEnum status) { this.status = status; }
+    
+    public Gate getGate() { return gate; }
+    public void setGate(Gate gate) { this.gate = gate; }
+
+    public String getTerminal() { return terminal; }
+    public void setTerminal(String terminal) { this.terminal = terminal; }
 
 //    public LocalDateTime getActualDeparture() { return actualDeparture; }
 //    public void setActualDeparture(LocalDateTime actualDeparture) { this.actualDeparture = actualDeparture; }

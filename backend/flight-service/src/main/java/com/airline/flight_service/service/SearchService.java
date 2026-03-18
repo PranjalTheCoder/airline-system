@@ -1,18 +1,12 @@
 package com.airline.flight_service.service;
 
-
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.airline.flight_service.entity.Flight;
-import com.airline.flight_service.entity.FlightInstance;
-import com.airline.flight_service.entity.FlightSchedule;
-import com.airline.flight_service.entity.Route;
-import com.airline.flight_service.repository.FlightInstanceRepository;
-import com.airline.flight_service.repository.FlightRepository;
-import com.airline.flight_service.repository.FlightScheduleRepository;
-import com.airline.flight_service.repository.RouteRepository;
+import com.airline.flight_service.entity.*;
+import com.airline.flight_service.repository.*;
 
 @Service
 public class SearchService {
@@ -32,14 +26,34 @@ public class SearchService {
         this.instanceRepo = instanceRepo;
     }
 
-    public List<FlightInstance> search(String origin, String destination, java.time.LocalDate date) {
+    public List<FlightInstance> search(String origin, String destination, LocalDate date) {
 
-        Route route = routeRepo.findByOriginIataCodeAndDestinationIataCode(origin, destination);
+        // 1. Find route
+        Route route = routeRepo
+                .findByOriginIataCodeAndDestinationIataCode(origin, destination);
 
-        List<Flight> flights = flightRepo.findAll();
+        if (route == null) {
+            throw new RuntimeException("Route not found");
+        }
 
-        List<FlightSchedule> schedules = scheduleRepo.findAll();
+        // 2. Find flights for route
+        List<Flight> flights = flightRepo.findByRouteId(route.getId());
 
-        return instanceRepo.findAll(); // simple version
+        if (flights.isEmpty()) {
+            throw new RuntimeException("No flights found");
+        }
+
+        // 3. Find schedules
+        List<FlightSchedule> schedules = scheduleRepo.findByFlightIn(flights);
+
+        if (schedules.isEmpty()) {
+            throw new RuntimeException("No schedules found");
+        }
+
+        // 4. Find instances for date
+        List<FlightInstance> instances =
+                instanceRepo.findByScheduleInAndDepartureDate(schedules, date);
+
+        return instances;
     }
 }
