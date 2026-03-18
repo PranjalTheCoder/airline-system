@@ -1,8 +1,6 @@
 package com.airline.flight_service.controller;
-import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,8 +23,8 @@ public class SearchController {
     public List<FlightInstance> search(
             @RequestParam String origin,
             @RequestParam String destination,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+            @RequestParam String date
     ) {
-        return service.searchFlights(origin, destination, date);
+        return service.search(origin, destination, java.time.LocalDate.parse(date));
     }
 }

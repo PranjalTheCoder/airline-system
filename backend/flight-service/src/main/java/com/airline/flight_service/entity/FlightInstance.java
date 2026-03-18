@@ -19,26 +19,25 @@ public class FlightInstance {
     private LocalDate departureDate;
     private String status;
 
-    private LocalDateTime actualDeparture;
-    private LocalDateTime actualArrival;
-
-    private String gate;
-    private String terminal;
+//    private LocalDateTime actualDeparture;
+//    private LocalDateTime actualArrival;
+//
+//    private String gate;
+//    private String terminal;
 
     // Constructors
     public FlightInstance() {}
 
     public FlightInstance(Long id, FlightSchedule schedule, LocalDate departureDate,
-                          String status, LocalDateTime actualDeparture,
-                          LocalDateTime actualArrival, String gate, String terminal) {
+                          String status) {
         this.id = id;
         this.schedule = schedule;
         this.departureDate = departureDate;
         this.status = status;
-        this.actualDeparture = actualDeparture;
-        this.actualArrival = actualArrival;
-        this.gate = gate;
-        this.terminal = terminal;
+//        this.actualDeparture = actualDeparture;
+//        this.actualArrival = actualArrival;
+//        this.gate = gate;
+//        this.terminal = terminal;
     }
 
     // Getters & Setters
@@ -54,17 +53,17 @@ public class FlightInstance {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public LocalDateTime getActualDeparture() { return actualDeparture; }
-    public void setActualDeparture(LocalDateTime actualDeparture) { this.actualDeparture = actualDeparture; }
-
-    public LocalDateTime getActualArrival() { return actualArrival; }
-    public void setActualArrival(LocalDateTime actualArrival) { this.actualArrival = actualArrival; }
-
-    public String getGate() { return gate; }
-    public void setGate(String gate) { this.gate = gate; }
-
-    public String getTerminal() { return terminal; }
-    public void setTerminal(String terminal) { this.terminal = terminal; }
+//    public LocalDateTime getActualDeparture() { return actualDeparture; }
+//    public void setActualDeparture(LocalDateTime actualDeparture) { this.actualDeparture = actualDeparture; }
+//
+//    public LocalDateTime getActualArrival() { return actualArrival; }
+//    public void setActualArrival(LocalDateTime actualArrival) { this.actualArrival = actualArrival; }
+//
+//    public String getGate() { return gate; }
+//    public void setGate(String gate) { this.gate = gate; }
+//
+//    public String getTerminal() { return terminal; }
+//    public void setTerminal(String terminal) { this.terminal = terminal; }
 
 	
 }

@@ -6,20 +6,22 @@ import jakarta.persistence.*;
 @Table(name = "routes")
 public class Route {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "origin_airport_id")
     private Airport origin;
 
     @ManyToOne
+    @JoinColumn(name = "destination_airport_id")
     private Airport destination;
 
     private Integer distance;
     private Integer duration;
 
-    // Constructors
     public Route() {}
 
     public Route(Long id, Airport origin, Airport destination, Integer distance, Integer duration) {

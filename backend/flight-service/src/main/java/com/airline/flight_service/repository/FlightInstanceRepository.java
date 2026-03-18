@@ -8,13 +8,4 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface FlightInstanceRepository extends JpaRepository<FlightInstance, Long> {
-
-    List<FlightInstance> findByScheduleInAndDepartureDate(
-            List<FlightSchedule> schedules,
-            LocalDate date
-    );
-
-    List<FlightInstance> findByDepartureDate(LocalDate date);
-
-    List<FlightInstance> findByScheduleFlightId(Long flightId);
 }

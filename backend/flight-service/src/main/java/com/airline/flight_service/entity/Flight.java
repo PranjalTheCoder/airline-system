@@ -1,6 +1,12 @@
 package com.airline.flight_service.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "flights")
@@ -13,12 +19,13 @@ public class Flight {
     private String flightNumber;
 
     @ManyToOne
+    @JoinColumn(name = "airline_id")
     private Airline airline;
 
     @ManyToOne
+    @JoinColumn(name = "route_id")
     private Route route;
 
-    // Constructors
     public Flight() {}
 
     public Flight(Long id, String flightNumber, Airline airline, Route route) {
@@ -27,7 +34,6 @@ public class Flight {
         this.airline = airline;
         this.route = route;
     }
-
     // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
