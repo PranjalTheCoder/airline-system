@@ -1,0 +1,30 @@
+{
+  "aircraft": [
+    { "id": "AC001", "registration": "N-SW001", "model": "Boeing 787-9", "manufacturer": "Boeing", "capacity": 296, "cabinConfig": { "first": 8, "business": 42, "premiumEconomy": 48, "economy": 198 }, "status": "ACTIVE", "yearBuilt": 2019, "lastMaintenance": "2026-01-15", "nextMaintenance": "2026-07-15" },
+    { "id": "AC002", "registration": "N-SW002", "model": "Airbus A380", "manufacturer": "Airbus", "capacity": 555, "cabinConfig": { "first": 14, "business": 76, "premiumEconomy": 56, "economy": 409 }, "status": "ACTIVE", "yearBuilt": 2017, "lastMaintenance": "2026-02-01", "nextMaintenance": "2026-08-01" },
+    { "id": "AC003", "registration": "N-SW003", "model": "Boeing 737-800", "manufacturer": "Boeing", "capacity": 174, "cabinConfig": { "first": 0, "business": 12, "premiumEconomy": 0, "economy": 162 }, "status": "MAINTENANCE", "yearBuilt": 2015, "lastMaintenance": "2026-03-10", "nextMaintenance": "2026-04-10" },
+    { "id": "AC004", "registration": "N-SW004", "model": "Airbus A350-900", "manufacturer": "Airbus", "capacity": 369, "cabinConfig": { "first": 0, "business": 40, "premiumEconomy": 24, "economy": 305 }, "status": "ACTIVE", "yearBuilt": 2020, "lastMaintenance": "2026-01-20", "nextMaintenance": "2026-07-20" },
+    { "id": "AC005", "registration": "N-SW005", "model": "Boeing 777-300ER", "manufacturer": "Boeing", "capacity": 396, "cabinConfig": { "first": 0, "business": 48, "premiumEconomy": 48, "economy": 300 }, "status": "ACTIVE", "yearBuilt": 2018, "lastMaintenance": "2026-03-01", "nextMaintenance": "2026-09-01" }
+  ],
+  "airports": [
+    { "code": "JFK", "name": "John F Kennedy International", "city": "New York", "country": "USA", "terminals": ["T1","T2","T4","T5","T7","T8"], "status": "ACTIVE" },
+    { "code": "LHR", "name": "London Heathrow", "city": "London", "country": "UK", "terminals": ["T2","T3","T4","T5"], "status": "ACTIVE" },
+    { "code": "DXB", "name": "Dubai International", "city": "Dubai", "country": "UAE", "terminals": ["T1","T2","T3"], "status": "ACTIVE" }
+  ],
+  "adminStats": {
+    "totalFlights": 6,
+    "totalAircraft": 5,
+    "activeRoutes": 4,
+    "totalPassengersToday": 1740,
+    "revenue": 2840000,
+    "revenueGrowth": 12.4,
+    "loadFactor": 82.3,
+    "onTimePerformance": 66.7
+  },
+  "crews": [
+    { "id": "CR001", "employeeId": "EMP001", "firstName": "Captain", "lastName": "James Wilson", "role": "CAPTAIN", "license": "ATPL-001234", "rating": ["B787","A380"], "base": "JFK", "status": "ON_DUTY", "flightHoursMonth": 62, "flightHoursMax": 85 },
+    { "id": "CR002", "employeeId": "EMP002", "firstName": "First Officer", "lastName": "Sarah Chen", "role": "FIRST_OFFICER", "license": "ATPL-005678", "rating": ["B787"], "base": "JFK", "status": "STANDBY", "flightHoursMonth": 48, "flightHoursMax": 85 },
+    { "id": "CR003", "employeeId": "EMP003", "firstName": "Purser", "lastName": "Maria Santos", "role": "CABIN_CREW_LEAD", "license": "CC-009012", "rating": ["B787","A380","A350"], "base": "LHR", "status": "OFF_DUTY", "flightHoursMonth": 71, "flightHoursMax": 85 },
+    { "id": "CR004", "employeeId": "EMP004", "firstName": "Captain", "lastName": "Ahmed Al-Rashid", "role": "CAPTAIN", "license": "ATPL-003456", "rating": ["A380","A350"], "base": "DXB", "status": "ON_DUTY", "flightHoursMonth": 58, "flightHoursMax": 85 }
+  ]
+}

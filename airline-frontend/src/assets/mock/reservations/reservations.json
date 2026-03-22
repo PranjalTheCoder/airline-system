@@ -1,0 +1,61 @@
+{
+  "reservations": [
+    {
+      "id": "RES001",
+      "pnr": "SKY7X2",
+      "status": "CONFIRMED",
+      "userId": "USR001",
+      "outboundFlightId": "FL001",
+      "cabinClass": "ECONOMY",
+      "contactEmail": "john.doe@email.com",
+      "contactPhone": "+1-555-0101",
+      "createdAt": "2026-03-20T10:30:00",
+      "expiresAt": "2026-04-15T06:30:00",
+      "passengers": [
+        { "id": "PAX001", "type": "ADULT", "title": "Mr", "firstName": "John", "lastName": "Doe", "dateOfBirth": "1990-05-15", "gender": "MALE", "nationality": "American", "passportNumber": "A12345678", "passportExpiry": "2030-05-14", "mealPreference": "STANDARD", "selectedSeatNumber": "12A" }
+      ],
+      "pricing": {
+        "baseFare": 580,
+        "taxes": [
+          { "code": "YQ", "name": "Fuel surcharge", "amount": 45 },
+          { "code": "US", "name": "US customs fee", "amount": 18.9 },
+          { "code": "YR", "name": "Service charge", "amount": 25 }
+        ],
+        "seatCharges": 45,
+        "baggageCharges": 0,
+        "serviceFee": 9.99,
+        "discount": 0,
+        "totalAmount": 723.89,
+        "currency": "USD"
+      }
+    },
+    {
+      "id": "RES002",
+      "pnr": "SKY4M8",
+      "status": "TICKETED",
+      "userId": "USR001",
+      "outboundFlightId": "FL004",
+      "cabinClass": "BUSINESS",
+      "contactEmail": "john.doe@email.com",
+      "contactPhone": "+1-555-0101",
+      "createdAt": "2026-02-10T14:00:00",
+      "expiresAt": "2026-04-16T00:10:00",
+      "passengers": [
+        { "id": "PAX002", "type": "ADULT", "title": "Mr", "firstName": "John", "lastName": "Doe", "dateOfBirth": "1990-05-15", "gender": "MALE", "nationality": "American", "passportNumber": "A12345678", "passportExpiry": "2030-05-14", "mealPreference": "HALAL", "selectedSeatNumber": "3A" }
+      ],
+      "pricing": {
+        "baseFare": 1200,
+        "taxes": [
+          { "code": "YQ", "name": "Fuel surcharge", "amount": 80 },
+          { "code": "AE", "name": "UAE tax", "amount": 30 }
+        ],
+        "seatCharges": 0,
+        "baggageCharges": 0,
+        "serviceFee": 9.99,
+        "discount": 120,
+        "totalAmount": 1199.99,
+        "currency": "USD"
+      }
+    }
+  ]
+}

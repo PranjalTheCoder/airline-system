@@ -1,0 +1,29 @@
+{
+  "flightStatuses": [
+    { "flightId": "FL001", "flightNumber": "SW101", "origin": "JFK", "destination": "LHR", "scheduledDep": "2026-04-15T08:30:00", "actualDep": "2026-04-15T08:30:00", "status": "ON_TIME", "gate": "B12", "terminal": "T4", "paxBoarded": 0, "paxTotal": 312, "delayMinutes": 0 },
+    { "flightId": "FL002", "flightNumber": "SW204", "origin": "JFK", "destination": "LHR", "scheduledDep": "2026-04-15T14:15:00", "actualDep": "2026-04-15T14:15:00", "status": "BOARDING", "gate": "A7", "terminal": "T4", "paxBoarded": 187, "paxTotal": 397, "delayMinutes": 0 },
+    { "flightId": "FL003", "flightNumber": "SW315", "origin": "JFK", "destination": "LHR", "scheduledDep": "2026-04-15T22:00:00", "actualDep": "2026-04-15T22:45:00", "status": "DELAYED", "gate": "C3", "terminal": "T2", "paxBoarded": 0, "paxTotal": 174, "delayMinutes": 45, "delayReason": "Late arriving aircraft" },
+    { "flightId": "FL004", "flightNumber": "SW442", "origin": "DXB", "destination": "BOM", "scheduledDep": "2026-04-16T02:10:00", "actualDep": "2026-04-16T02:40:00", "status": "DELAYED", "gate": "D14", "terminal": "T3", "paxBoarded": 0, "paxTotal": 305, "delayMinutes": 30, "delayReason": "Weather conditions" },
+    { "flightId": "FL005", "flightNumber": "SW558", "origin": "SIN", "destination": "SYD", "scheduledDep": "2026-04-17T09:45:00", "actualDep": "2026-04-17T09:45:00", "status": "SCHEDULED", "gate": "F22", "terminal": "T1", "paxBoarded": 0, "paxTotal": 352, "delayMinutes": 0 },
+    { "flightId": "FL006", "flightNumber": "SW677", "origin": "CDG", "destination": "NRT", "scheduledDep": "2026-04-18T11:20:00", "actualDep": "2026-04-18T11:20:00", "status": "SCHEDULED", "gate": "G9", "terminal": "T2E", "paxBoarded": 0, "paxTotal": 200, "delayMinutes": 0 }
+  ],
+  "delays": [
+    { "id": "DLY001", "flightId": "FL003", "flightNumber": "SW315", "reportedAt": "2026-04-15T18:30:00", "delayMinutes": 45, "reason": "LATE_AIRCRAFT", "reasonText": "Late arriving aircraft from previous sector", "impact": "MINOR", "status": "ACTIVE" },
+    { "id": "DLY002", "flightId": "FL004", "flightNumber": "SW442", "reportedAt": "2026-04-15T22:00:00", "delayMinutes": 30, "reason": "WEATHER", "reasonText": "Adverse weather conditions at destination", "impact": "MINOR", "status": "ACTIVE" }
+  ],
+  "iropsEvents": [
+    { "id": "IRP001", "type": "DELAY", "flightId": "FL003", "flightNumber": "SW315", "severity": "LOW", "description": "45-minute delay due to late aircraft", "affectedPax": 174, "createdAt": "2026-04-15T18:30:00", "status": "OPEN", "actions": ["Notify passengers via SMS", "Update FIDS boards"] },
+    { "id": "IRP002", "type": "DELAY", "flightId": "FL004", "flightNumber": "SW442", "severity": "LOW", "description": "30-minute delay due to weather", "affectedPax": 305, "createdAt": "2026-04-15T22:00:00", "status": "OPEN", "actions": ["Monitor weather", "Gate agent notified"] }
+  ],
+  "analytics": {
+    "todayStats": { "totalFlights": 6, "onTime": 4, "delayed": 2, "cancelled": 0, "totalPax": 1740, "onTimePerformance": 66.7 },
+    "weeklyOTP": [72, 85, 91, 68, 88, 77, 83],
+    "delayReasons": [
+      { "reason": "Weather", "count": 4, "pct": 35 },
+      { "reason": "Late Aircraft", "count": 3, "pct": 26 },
+      { "reason": "ATC", "count": 2, "pct": 17 },
+      { "reason": "Technical", "count": 2, "pct": 17 },
+      { "reason": "Other", "count": 1, "pct": 8.7 }
+    ]
+  }
+}
