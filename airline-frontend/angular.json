@@ -11,7 +11,7 @@
           "standalone": true
         },
         "@schematics/angular:directive": { "standalone": true },
-        "@schematics/angular:pipe":      { "standalone": true }
+        "@schematics/angular:pipe": { "standalone": true }
       },
       "root": "",
       "sourceRoot": "src",
@@ -26,13 +26,8 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -61,9 +56,16 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
-            "production": { "buildTarget": "airline-frontend:build:production" },
-            "development": { "buildTarget": "airline-frontend:build:development" }
+            "production": {
+              "buildTarget": "airline-frontend:build:production"
+            },
+            "development": {
+              "buildTarget": "airline-frontend:build:development"
+            }
           },
           "defaultConfiguration": "development"
         },

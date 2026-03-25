@@ -60,7 +60,7 @@
     "logLevel": "info"
   },
   "/api/admin": {
-    "target": "http://localhost:8091",
+    "target": "http://localhost:8080",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "info"

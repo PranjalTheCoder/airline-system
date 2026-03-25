@@ -1,16 +1,20 @@
 import { Injectable } from '@angular/core';
 import {
-  HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpResponse
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor,
+  HttpResponse,
 } from '@angular/common/http';
 import { Observable, of, delay } from 'rxjs';
 
 // ─── Import JSON data ────────────────────────────────────────
-import flightsData      from '../../../assets/mock/flights/flights.json';
-import seatMapData      from '../../../assets/mock/inventory/seat_map.json';
+import flightsData from '../../../assets/mock/flights/flights.json';
+import seatMapData from '../../../assets/mock/inventory/seat_map.json';
 import reservationsData from '../../../assets/mock/reservations/reservations.json';
-import operationsData   from '../../../assets/mock/operations/operations.json';
-import adminData        from '../../../assets/mock/admin/admin.json';
-import loyaltyData      from '../../../assets/mock/loyalty/loyalty.json';
+import operationsData from '../../../assets/mock/operations/operations.json';
+import adminData from '../../../assets/mock/admin/admin.json';
+import loyaltyData from '../../../assets/mock/loyalty/loyalty.json';
 
 /**
  * MockInterceptor — intercepts HTTP calls when environment.useMock = true
@@ -41,12 +45,25 @@ import loyaltyData      from '../../../assets/mock/loyalty/loyalty.json';
  */
 @Injectable()
 export class MockInterceptor implements HttpInterceptor {
-
   private NETWORK_DELAY = 600; // ms — simulate realistic latency
 
-  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    const url    = req.url;
+  intercept(
+    req: HttpRequest<unknown>,
+    next: HttpHandler,
+  ): Observable<HttpEvent<unknown>> {
+    const url = req.url;
     const method = req.method;
+
+    const isLiveAdminRoute =
+      url.includes('/api/admin/dashboard') ||
+      url.includes('/api/admin/stats') ||
+      url.includes('/api/admin/aircraft') ||
+      url.includes('/api/admin/airports') ||
+      url.includes('/api/admin/crew');
+
+    if (isLiveAdminRoute) {
+      return next.handle(req); // Forward to Gateway (localhost:8080)
+    }
 
     // ── Auth ──────────────────────────────────────────────────
     if (url.includes('/api/auth/login') && method === 'POST') {
@@ -66,7 +83,12 @@ export class MockInterceptor implements HttpInterceptor {
     if (url.includes('/api/flights/airports')) {
       const q = this.getQueryParam(url, 'q')?.toUpperCase() ?? '';
       const results = (flightsData as any).airports
-        .filter((a: any) => a.code.includes(q) || a.city.toUpperCase().includes(q) || a.name.toUpperCase().includes(q))
+        .filter(
+          (a: any) =>
+            a.code.includes(q) ||
+            a.city.toUpperCase().includes(q) ||
+            a.name.toUpperCase().includes(q),
+        )
         .slice(0, 6);
       return this.respond(results);
     }
@@ -90,7 +112,11 @@ export class MockInterceptor implements HttpInterceptor {
       const seatMap = (seatMapData as any).seatMaps[0];
       return this.respond(seatMap);
     }
-    if (url.includes('/api/inventory/seats') && url.includes('/lock') && method === 'POST') {
+    if (
+      url.includes('/api/inventory/seats') &&
+      url.includes('/lock') &&
+      method === 'POST'
+    ) {
       return this.respond({ success: true });
     }
     if (url.includes('/api/inventory/seats') && method === 'DELETE') {
@@ -103,10 +129,16 @@ export class MockInterceptor implements HttpInterceptor {
     }
     if (url.includes('/api/reservations/pnr/')) {
       const pnr = url.split('/').pop();
-      const res = (reservationsData as any).reservations.find((r: any) => r.pnr === pnr);
+      const res = (reservationsData as any).reservations.find(
+        (r: any) => r.pnr === pnr,
+      );
       return this.respond(res ?? null, res ? 200 : 404);
     }
-    if (url.match(/\/api\/reservations\/[A-Z0-9]+$/) && method === 'POST' && url.includes('/cancel')) {
+    if (
+      url.match(/\/api\/reservations\/[A-Z0-9]+$/) &&
+      method === 'POST' &&
+      url.includes('/cancel')
+    ) {
       return this.respond({ ...this.mockReservation(), status: 'CANCELLED' });
     }
     if (url.match(/\/api\/reservations\/[A-Z0-9]+$/) && method === 'GET') {
@@ -142,9 +174,15 @@ export class MockInterceptor implements HttpInterceptor {
     // ── Check-in ──────────────────────────────────────────────
     if (url.includes('/api/checkin/pnr/')) {
       const pnr = url.split('/').pop();
-      const res = (reservationsData as any).reservations.find((r: any) => r.pnr === pnr);
+      const res = (reservationsData as any).reservations.find(
+        (r: any) => r.pnr === pnr,
+      );
       if (!res) return this.respond({ message: 'PNR not found' }, 404);
-      return this.respond({ reservation: res, eligible: true, message: 'Check-in open' });
+      return this.respond({
+        reservation: res,
+        eligible: true,
+        message: 'Check-in open',
+      });
     }
     if (url.includes('/api/checkin') && method === 'POST') {
       return this.respond(this.mockBoardingPass());
@@ -155,7 +193,10 @@ export class MockInterceptor implements HttpInterceptor {
       return this.respond(this.mockBaggageStatus());
     }
     if (url.includes('/api/baggage') && method === 'POST') {
-      return this.respond({ id: 'BG-' + Math.random().toString(36).substr(2,8).toUpperCase(), success: true });
+      return this.respond({
+        id: 'BG-' + Math.random().toString(36).substr(2, 8).toUpperCase(),
+        success: true,
+      });
     }
 
     // ── Loyalty ───────────────────────────────────────────────
@@ -169,7 +210,10 @@ export class MockInterceptor implements HttpInterceptor {
       return this.respond({ success: true, newBalance: 37850 });
     }
     if (url.includes('/api/loyalty')) {
-      return this.respond({ account: (loyaltyData as any).account, tiers: (loyaltyData as any).tiers });
+      return this.respond({
+        account: (loyaltyData as any).account,
+        tiers: (loyaltyData as any).tiers,
+      });
     }
 
     // ── Operations ────────────────────────────────────────────
@@ -185,7 +229,11 @@ export class MockInterceptor implements HttpInterceptor {
     if (url.includes('/api/operations/status')) {
       return this.respond((operationsData as any).flightStatuses);
     }
-    if (url.includes('/api/operations') && url.includes('/delay') && method === 'POST') {
+    if (
+      url.includes('/api/operations') &&
+      url.includes('/delay') &&
+      method === 'POST'
+    ) {
       return this.respond({ id: 'DLY-' + Date.now(), success: true });
     }
 
@@ -205,13 +253,19 @@ export class MockInterceptor implements HttpInterceptor {
     if (url.includes('/api/admin/flights') && method === 'GET') {
       return this.respond((flightsData as any).flights);
     }
-    if (url.includes('/api/admin/flights') && (method === 'POST' || method === 'PUT')) {
+    if (
+      url.includes('/api/admin/flights') &&
+      (method === 'POST' || method === 'PUT')
+    ) {
       return this.respond({ ...(req.body as any), id: 'FL' + Date.now() });
     }
     if (url.includes('/api/admin/flights') && method === 'DELETE') {
       return this.respond({ success: true });
     }
-    if (url.includes('/api/admin/aircraft') && (method === 'POST' || method === 'PUT')) {
+    if (
+      url.includes('/api/admin/aircraft') &&
+      (method === 'POST' || method === 'PUT')
+    ) {
       return this.respond({ ...(req.body as any), id: 'AC' + Date.now() });
     }
 
@@ -231,9 +285,13 @@ export class MockInterceptor implements HttpInterceptor {
 
   // ─── Helpers ──────────────────────────────────────────────────
 
-  private respond<T>(body: T, status = 200, networkDelay?: number): Observable<HttpEvent<T>> {
+  private respond<T>(
+    body: T,
+    status = 200,
+    networkDelay?: number,
+  ): Observable<HttpEvent<T>> {
     return of(new HttpResponse({ status, body })).pipe(
-      delay(networkDelay ?? this.NETWORK_DELAY)
+      delay(networkDelay ?? this.NETWORK_DELAY),
     );
   }
 
@@ -245,31 +303,75 @@ export class MockInterceptor implements HttpInterceptor {
   // ─── Mock entity builders ─────────────────────────────────────
 
   private mockLogin(body: any) {
-    const token = 'mock.jwt.' + btoa(JSON.stringify({ sub: 'USR001', role: 'PASSENGER', exp: Date.now() + 3600000 }));
+    const token =
+      'mock.jwt.' +
+      btoa(
+        JSON.stringify({
+          sub: 'USR001',
+          role: 'PASSENGER',
+          exp: Date.now() + 3600000,
+        }),
+      );
     return {
-      user: { id: 'USR001', email: body?.email ?? 'user@skyway.com', firstName: 'John', lastName: 'Doe', role: 'PASSENGER', phone: '+1-555-0101', createdAt: '2023-01-01' },
-      tokens: { accessToken: token, refreshToken: 'mock.refresh.' + Date.now(), expiresIn: 3600 },
+      user: {
+        id: 'USR001',
+        email: body?.email ?? 'user@skyway.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        role: 'PASSENGER',
+        phone: '+1-555-0101',
+        createdAt: '2023-01-01',
+      },
+      tokens: {
+        accessToken: token,
+        refreshToken: 'mock.refresh.' + Date.now(),
+        expiresIn: 3600,
+      },
     };
   }
 
   private mockRegister(body: any) {
-    const token = 'mock.jwt.' + btoa(JSON.stringify({ sub: 'USR' + Date.now(), role: 'PASSENGER' }));
+    const token =
+      'mock.jwt.' +
+      btoa(JSON.stringify({ sub: 'USR' + Date.now(), role: 'PASSENGER' }));
     return {
-      user: { id: 'USR' + Date.now(), email: body?.email, firstName: body?.firstName, lastName: body?.lastName, role: 'PASSENGER', createdAt: new Date().toISOString() },
-      tokens: { accessToken: token, refreshToken: 'mock.refresh.' + Date.now(), expiresIn: 3600 },
+      user: {
+        id: 'USR' + Date.now(),
+        email: body?.email,
+        firstName: body?.firstName,
+        lastName: body?.lastName,
+        role: 'PASSENGER',
+        createdAt: new Date().toISOString(),
+      },
+      tokens: {
+        accessToken: token,
+        refreshToken: 'mock.refresh.' + Date.now(),
+        expiresIn: 3600,
+      },
     };
   }
 
   private mockRefresh() {
-    return { accessToken: 'mock.jwt.refreshed.' + Date.now(), refreshToken: 'mock.refresh.' + Date.now() };
+    return {
+      accessToken: 'mock.jwt.refreshed.' + Date.now(),
+      refreshToken: 'mock.refresh.' + Date.now(),
+    };
   }
 
   private mockProfile() {
-    return { id: 'USR001', email: 'john.doe@email.com', firstName: 'John', lastName: 'Doe', role: 'PASSENGER', phone: '+1-555-0101', createdAt: '2023-01-01' };
+    return {
+      id: 'USR001',
+      email: 'john.doe@email.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      role: 'PASSENGER',
+      phone: '+1-555-0101',
+      createdAt: '2023-01-01',
+    };
   }
 
   private mockReservation() {
-    const pnr = 'SKY' + Math.random().toString(36).substr(2,4).toUpperCase();
+    const pnr = 'SKY' + Math.random().toString(36).substr(2, 4).toUpperCase();
     return {
       id: 'RES' + Date.now(),
       pnr,
@@ -278,9 +380,14 @@ export class MockInterceptor implements HttpInterceptor {
       createdAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
       pricing: {
-        baseFare: 580, taxes: [{ code: 'YQ', name: 'Fuel surcharge', amount: 45 }],
-        seatCharges: 25, baggageCharges: 0, serviceFee: 9.99,
-        discount: 0, totalAmount: 659.99, currency: 'USD',
+        baseFare: 580,
+        taxes: [{ code: 'YQ', name: 'Fuel surcharge', amount: 45 }],
+        seatCharges: 25,
+        baggageCharges: 0,
+        serviceFee: 9.99,
+        discount: 0,
+        totalAmount: 659.99,
+        currency: 'USD',
       },
     };
   }
@@ -292,7 +399,8 @@ export class MockInterceptor implements HttpInterceptor {
       status: 'SUCCESS',
       amount: 659.99,
       currency: 'USD',
-      transactionRef: 'TXN' + Math.random().toString(36).substr(2,10).toUpperCase(),
+      transactionRef:
+        'TXN' + Math.random().toString(36).substr(2, 10).toUpperCase(),
       paidAt: new Date().toISOString(),
       message: 'Payment successful',
     };
@@ -314,35 +422,69 @@ export class MockInterceptor implements HttpInterceptor {
     return {
       pnr: 'SKY7X2',
       status: 'CHECKED_IN',
-      boardingPasses: [{
-        passengerId: 'PAX001',
-        passengerName: 'John Doe',
-        flightNumber: 'SW101',
-        origin: 'JFK', destination: 'LHR',
-        departureDate: '2026-04-15',
-        departureTime: '08:30',
-        seatNumber: '12A',
-        gate: 'B12', terminal: 'T4',
-        boardingGroup: 'A',
-        boardingTime: '07:45',
-        qrCode: 'SKY7X2-PAX001-SW101-12A',
-      }],
+      boardingPasses: [
+        {
+          passengerId: 'PAX001',
+          passengerName: 'John Doe',
+          flightNumber: 'SW101',
+          origin: 'JFK',
+          destination: 'LHR',
+          departureDate: '2026-04-15',
+          departureTime: '08:30',
+          seatNumber: '12A',
+          gate: 'B12',
+          terminal: 'T4',
+          boardingGroup: 'A',
+          boardingTime: '07:45',
+          qrCode: 'SKY7X2-PAX001-SW101-12A',
+        },
+      ],
     };
   }
 
   private mockBaggageStatus() {
     return {
-      tagNumber: 'BG-' + Math.random().toString(36).substr(2,8).toUpperCase(),
+      tagNumber: 'BG-' + Math.random().toString(36).substr(2, 8).toUpperCase(),
       pnr: 'SKY7X2',
       weight: 22.5,
       status: 'IN_TRANSIT',
       timeline: [
-        { event: 'CHECKED_IN', location: 'JFK T4 Check-in', timestamp: '2026-04-15T06:30:00', completed: true },
-        { event: 'SECURITY_CLEARED', location: 'JFK Security', timestamp: '2026-04-15T07:00:00', completed: true },
-        { event: 'LOADED', location: 'JFK Baggage Hold', timestamp: '2026-04-15T08:00:00', completed: true },
-        { event: 'IN_TRANSIT', location: 'On Board SW101', timestamp: '2026-04-15T08:30:00', completed: true },
-        { event: 'ARRIVED', location: 'LHR T4', timestamp: '2026-04-15T20:45:00', completed: false },
-        { event: 'DELIVERED', location: 'LHR Baggage Claim Belt 6', timestamp: '2026-04-15T21:15:00', completed: false },
+        {
+          event: 'CHECKED_IN',
+          location: 'JFK T4 Check-in',
+          timestamp: '2026-04-15T06:30:00',
+          completed: true,
+        },
+        {
+          event: 'SECURITY_CLEARED',
+          location: 'JFK Security',
+          timestamp: '2026-04-15T07:00:00',
+          completed: true,
+        },
+        {
+          event: 'LOADED',
+          location: 'JFK Baggage Hold',
+          timestamp: '2026-04-15T08:00:00',
+          completed: true,
+        },
+        {
+          event: 'IN_TRANSIT',
+          location: 'On Board SW101',
+          timestamp: '2026-04-15T08:30:00',
+          completed: true,
+        },
+        {
+          event: 'ARRIVED',
+          location: 'LHR T4',
+          timestamp: '2026-04-15T20:45:00',
+          completed: false,
+        },
+        {
+          event: 'DELIVERED',
+          location: 'LHR Baggage Claim Belt 6',
+          timestamp: '2026-04-15T21:15:00',
+          completed: false,
+        },
       ],
     };
   }
