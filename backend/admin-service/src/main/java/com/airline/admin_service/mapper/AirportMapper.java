@@ -20,9 +20,30 @@ public class AirportMapper {
         this.terminalRepo = terminalRepo;
     }
 
+//    public AirportDTO toDTO(Airport entity) {
+//        AirportDTO dto = new AirportDTO();
+//        BeanUtils.copyProperties(entity, dto);
+//
+//        List<String> terminals = terminalRepo.findByAirportCode(entity.getCode())
+//                .stream()
+//                .map(Terminal::getTerminal)
+//                .toList();
+//
+//        dto.setTerminals(terminals);
+//        dto.setTimezone(entity.getTimezone());
+//
+//        return dto;
+//    }
     public AirportDTO toDTO(Airport entity) {
+
         AirportDTO dto = new AirportDTO();
-        BeanUtils.copyProperties(entity, dto);
+
+        dto.setCode(entity.getCode());
+        dto.setName(entity.getName());
+        dto.setCity(entity.getCity());
+        dto.setCountry(entity.getCountry());
+        dto.setStatus(entity.getStatus());
+        dto.setTimezone(entity.getTimezone()); // ✅ NEW
 
         List<String> terminals = terminalRepo.findByAirportCode(entity.getCode())
                 .stream()

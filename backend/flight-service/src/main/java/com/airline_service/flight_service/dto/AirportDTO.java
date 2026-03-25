@@ -1,32 +1,23 @@
-package com.airline.admin_service.entity;
+package com.airline_service.flight_service.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "airports")
-public class Airport {
+public class AirportDTO {
 
-    @Id
     private String code;
-
     private String name;
     private String city;
     private String country;
-    private String status;
     private String timezone;
+    
+    // No-argument constructor
+    public AirportDTO() {}
 
-    // Default constructor (required by JPA)
-    public Airport() {}
-
-    // Parameterized constructor
-    public Airport(String code, String name, String city, String country, String status, String timezone) {
+    // All-argument constructor
+    public AirportDTO(String code, String name, String city, String country, String timezone) {
         this.code = code;
         this.name = name;
         this.city = city;
         this.country = country;
-        this.status = status;
         this.timezone = timezone;
     }
 
@@ -58,18 +49,6 @@ public class Airport {
     public void setCountry(String country) {
         this.country = country;
     }
-
-    public String getStatus() {
-        return status;
-    }
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getTimezone() {
-        return timezone;
-    }
-    public void setTimezone(String timezone) {
-        this.timezone = timezone;
-    }
+    public String getTimezone() { return timezone; }
+    public void setTimezone(String timezone) { this.timezone = timezone; }
 }

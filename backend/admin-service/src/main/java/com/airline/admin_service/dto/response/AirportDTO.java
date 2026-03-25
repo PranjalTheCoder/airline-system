@@ -9,19 +9,21 @@ public class AirportDTO {
     private String country;
     private List<String> terminals;
     private String status;
+    private String timezone;
 
     // Default constructor
     public AirportDTO() {}
 
     // Parameterized constructor
     public AirportDTO(String code, String name, String city, String country,
-                      List<String> terminals, String status) {
+                      List<String> terminals, String status, String timezone) {
         this.code = code;
         this.name = name;
         this.city = city;
         this.country = country;
         this.terminals = terminals;
         this.status = status;
+        this.timezone = timezone;
     }
 
     // Getters and Setters
@@ -65,5 +67,12 @@ public class AirportDTO {
     }
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
     }
 }

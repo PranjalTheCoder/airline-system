@@ -37,6 +37,7 @@ public class AirportService {
         airport.setCity(request.getCity());
         airport.setCountry(request.getCountry());
         airport.setStatus(request.getStatus());
+        airport.setTimezone(request.getTimezone());
 
         airportRepo.save(airport);
 
@@ -76,6 +77,7 @@ public class AirportService {
         airport.setCity(request.getCity());
         airport.setCountry(request.getCountry());
         airport.setStatus(request.getStatus());
+        airport.setTimezone(request.getTimezone());
 
         airportRepo.save(airport);
 
@@ -132,6 +134,10 @@ public class AirportService {
                 terminal.setTerminal(t);
                 terminalRepo.save(terminal);
             }
+        }
+
+        if (request.getTimezone() != null) {
+            airport.setTimezone(request.getTimezone());
         }
 
         return mapper.toDTO(airport);
