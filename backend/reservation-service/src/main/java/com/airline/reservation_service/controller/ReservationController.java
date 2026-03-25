@@ -1,6 +1,7 @@
 package com.airline.reservation_service.controller;
 
 import com.airline.reservation_service.dto.CreatePnrRequest;
+import com.airline.reservation_service.dto.PnrResponseDTO;
 import com.airline.reservation_service.entity.Pnr;
 import com.airline.reservation_service.service.ReservationService;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,8 @@ public class ReservationController {
     public ReservationController(ReservationService service) {
         this.service = service;
     }
+    
+    
 
     @PostMapping
     public Pnr create(@RequestBody CreatePnrRequest req){
@@ -28,8 +31,8 @@ public class ReservationController {
     }
 
     @GetMapping("/{pnr}")
-    public Pnr get(@PathVariable String pnr){
-        return service.getByCode(pnr);
+    public PnrResponseDTO get(@PathVariable String pnr){
+        return service.getPnrDetails(pnr);
     }
 
     @PutMapping("/{pnr}")

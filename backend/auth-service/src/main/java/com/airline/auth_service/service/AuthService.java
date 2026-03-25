@@ -92,4 +92,22 @@ public class AuthService {
     public List<Permission> getPermissions(){
         return permissionRepository.findAll();
     }
+    
+    public boolean validateToken(String token) {
+
+        token = token.replace("Bearer ", "");
+        return jwtService.isTokenValid(token);
+    }
+
+    public User getUserFromToken(String token) {
+
+        token = token.replace("Bearer ", "");
+
+        String username = jwtService.extractUsername(token);
+        
+        System.out.println("Extracted username: " + username); // 🔥 DEBUG
+
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }

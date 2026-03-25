@@ -5,28 +5,14 @@ import java.util.List;
 public class PnrDTO {
 
     private String pnrCode;
-    private String bookingStatus; // HOLD / CONFIRMED / CANCELLED
+    private String bookingStatus;
     private Long createdBy;
+
     private Double totalAmount;
-    private List<Object> passengers;
-    private List<Object> segments;
 
-    // Default constructor
-    public PnrDTO() {
-    }
+    private List<PassengerDTO> passengers;   // ✅ FIXED
+    private List<SegmentDTO> segments;       // ✅ FIXED
 
-    // Parameterized constructor
-    public PnrDTO(String pnrCode, String bookingStatus, Long createdBy, Double totalAmount,
-                  List<Object> passengers, List<Object> segments) {
-        this.pnrCode = pnrCode;
-        this.bookingStatus = bookingStatus;
-        this.createdBy = createdBy;
-        this.totalAmount = totalAmount;
-        this.passengers = passengers;
-        this.segments = segments;
-    }
-
-    // Getters and Setters
     public String getPnrCode() {
         return pnrCode;
     }
@@ -59,19 +45,19 @@ public class PnrDTO {
         this.totalAmount = totalAmount;
     }
 
-    public List<Object> getPassengers() {
+    public List<PassengerDTO> getPassengers() {
         return passengers;
     }
 
-    public void setPassengers(List<Object> passengers) {
+    public void setPassengers(List<PassengerDTO> passengers) {
         this.passengers = passengers;
     }
 
-    public List<Object> getSegments() {
+    public List<SegmentDTO> getSegments() {
         return segments;
     }
 
-    public void setSegments(List<Object> segments) {
+    public void setSegments(List<SegmentDTO> segments) {
         this.segments = segments;
     }
 }

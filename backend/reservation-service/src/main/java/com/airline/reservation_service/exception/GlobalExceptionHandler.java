@@ -1,11 +1,19 @@
 package com.airline.reservation_service.exception;
 
-import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public String handle(Exception ex) {
-        return ex.getMessage();
-    }
+    	Map<String, Object> error = new HashMap<>();
+        error.put("success", false);
+        error.put("message", e.getMessage()); // ✅ show real error
+        error.put("data", null);
+
+        return error;    }
 }

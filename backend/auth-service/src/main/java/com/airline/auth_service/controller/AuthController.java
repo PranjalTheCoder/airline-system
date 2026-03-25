@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -109,4 +110,19 @@ public class AuthController {
     public ResponseEntity<List<Permission>> getPermissions(){
         return ResponseEntity.ok(authService.getPermissions());
     }
+    
+    @PostMapping("/validate")
+    public ResponseEntity<Boolean> validate(@RequestHeader("Authorization") String token) {
+
+        boolean isValid = authService.validateToken(token);
+        return ResponseEntity.ok(isValid);
+    }
+    
+    @GetMapping("/me")
+    public ResponseEntity<User> getMe(@RequestHeader("Authorization") String token) {
+
+        User user = authService.getUserFromToken(token);
+        return ResponseEntity.ok(user);
+    }
+    
 }
