@@ -1,6 +1,8 @@
 package com.airline_service.flight_service.client;
 
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -40,6 +42,19 @@ public class AdminClient {
         } catch(Exception e) {
         	System.out.println("ERROR CALLING AIRPORT API: " + e.getMessage());
             return null;
+        }
+    }
+    public List<AirportDTO> getAllAirports() {
+        try {
+            return webClient.get()
+                    .uri("/api/admin/airports")
+                    .retrieve()
+                    .bodyToFlux(AirportDTO.class)
+                    .collectList()
+                    .block();
+        } catch (Exception e) {
+            System.out.println("ERROR CALLING ALL AIRPORTS API: " + e.getMessage());
+            return List.of();
         }
     }
 }

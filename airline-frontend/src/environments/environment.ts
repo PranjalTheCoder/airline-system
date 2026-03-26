@@ -12,5 +12,5 @@ export const environment = {
   baggageUrl: '/api/baggage',
   loyaltyUrl: '/api/loyalty',
   operationsUrl: '/api/operations',
-  adminUrl: 'http://localhost:8080/api/admin',
+  adminUrl: '/api/admin',
 };

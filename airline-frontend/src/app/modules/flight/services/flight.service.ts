@@ -1,8 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { FlightSearchParams, FlightSearchResult, Flight } from '../../../core/models';
+import {
+  FlightSearchParams,
+  FlightSearchResult,
+  Flight,
+} from '../../../core/models';
 
 @Injectable({ providedIn: 'root' })
 export class FlightService {
@@ -11,33 +15,51 @@ export class FlightService {
 
   searchFlights(params: FlightSearchParams): Observable<FlightSearchResult> {
     let httpParams = new HttpParams()
-      .set('origin',        params.origin)
-      .set('destination',   params.destination)
+      .set('origin', params.origin)
+      .set('destination', params.destination)
       .set('departureDate', params.departureDate)
-      .set('tripType',      params.tripType)
-      .set('adults',        params.adults)
-      .set('children',      params.children)
-      .set('infants',       params.infants)
-      .set('cabinClass',    params.cabinClass);
+      .set('tripType', params.tripType)
+      .set('adults', params.adults)
+      .set('children', params.children)
+      .set('infants', params.infants)
+      .set('cabinClass', params.cabinClass);
 
     if (params.returnDate) {
       httpParams = httpParams.set('returnDate', params.returnDate);
     }
 
-    return this.http.get<FlightSearchResult>(`${this.base}/search`, { params: httpParams });
+    return this.http
+      .get<any>(`${this.base}/search`, { params: httpParams })
+      .pipe(
+        map((response) => {
+          // Grab the array whether it is called 'flights' (Java) or 'outbound' (Mock)
+          const flightList = response.flights || response.outbound || [];
+
+          return {
+            outbound: flightList,
+            searchId: response.searchId || 'SRCH-' + Date.now(),
+            currency: response.currency || 'USD',
+            totalResults: response.totalResults || flightList.length,
+          } as FlightSearchResult;
+        }),
+      );
   }
 
   getFlightById(id: string): Observable<Flight> {
     return this.http.get<Flight>(`${this.base}/${id}`);
   }
 
-  getPopularRoutes(): Observable<{ origin: string; destination: string; price: number }[]> {
+  getPopularRoutes(): Observable<
+    { origin: string; destination: string; price: number }[]
+  > {
     return this.http.get<any[]>(`${this.base}/popular-routes`);
   }
 
-  getAirports(query: string): Observable<{ code: string; name: string; city: string }[]> {
+  getAirports(
+    query: string,
+  ): Observable<{ code: string; name: string; city: string }[]> {
     return this.http.get<any[]>(`${this.base}/airports`, {
-      params: new HttpParams().set('q', query)
+      params: new HttpParams().set('q', query),
     });
   }
 }

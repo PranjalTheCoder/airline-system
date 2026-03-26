@@ -901,9 +901,12 @@ export class AdminDashboardComponent implements OnInit {
       .subscribe({ next: (d) => this.crews.set(d) });
 
     // ── 2. MOCK DATA CALL (Caught by the Interceptor, returns flights.json) ──
-    this.http.get<any[]>(`${this.base}/admin/flights`).subscribe({
-      next: (d) => this.flights.set(d),
-      error: (err) => console.error('Flights Mock Error:', err),
+    this.http.get<any>(environment.flightUrl).subscribe({
+      next: (d) => {
+        const flightList = Array.isArray(d) ? d : d.flights || [];
+        this.flights.set(flightList);
+      },
+      error: (err) => console.error('Flights Data Error:', err),
     });
   }
 
