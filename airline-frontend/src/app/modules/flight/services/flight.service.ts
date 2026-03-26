@@ -14,15 +14,25 @@ export class FlightService {
   private base = environment.flightUrl;
 
   searchFlights(params: FlightSearchParams): Observable<FlightSearchResult> {
+    // 1. Calculate total passengers for the Java backend
+    const totalPassengers = (params.adults || 1) + (params.children || 0) + (params.infants || 0);
+
+    // 2. Build the parameters exactly as Spring Boot expects them
     let httpParams = new HttpParams()
-      .set('origin', params.origin)
+      .set('origin',      params.origin)
       .set('destination', params.destination)
-      .set('departureDate', params.departureDate)
-      .set('tripType', params.tripType)
-      .set('adults', params.adults)
-      .set('children', params.children)
-      .set('infants', params.infants)
-      .set('cabinClass', params.cabinClass);
+      .set('date',        params.departureDate) // ✅ Changed to 'date'
+      .set('passengers',  totalPassengers)      // ✅ Changed to 'passengers'
+      .set('cabinClass',  params.cabinClass || 'ECONOMY');
+    // let httpParams = new HttpParams()
+    //   .set('origin', params.origin)
+    //   .set('destination', params.destination)
+    //   .set('departureDate', params.departureDate)
+    //   .set('tripType', params.tripType)
+    //   .set('adults', params.adults)
+    //   .set('children', params.children)
+    //   .set('infants', params.infants)
+    //   .set('cabinClass', params.cabinClass);
 
     if (params.returnDate) {
       httpParams = httpParams.set('returnDate', params.returnDate);
