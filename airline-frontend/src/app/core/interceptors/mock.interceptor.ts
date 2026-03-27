@@ -63,9 +63,10 @@ export class MockInterceptor implements HttpInterceptor {
 
     // 2. NEW: Add Flight Bypass
     const isLiveFlightRoute =
-      url.includes('/api/flights/search') ||
       url.includes('/api/flights') ||
-      url.includes('/api/flights/airports');
+      url.includes('/api/flights/search') ||
+      url.includes('/api/flights/airports') ||
+      (url.endsWith('/api/flights') && method === 'GET');
 
     // 3. Let both Admin and Flight routes pass through to the Gateway
     if (isLiveAdminRoute || isLiveFlightRoute) {

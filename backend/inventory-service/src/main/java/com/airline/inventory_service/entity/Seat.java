@@ -1,6 +1,5 @@
 package com.airline.inventory_service.entity;
 
-
 import jakarta.persistence.*;
 
 @Entity
@@ -8,58 +7,85 @@ import jakarta.persistence.*;
 public class Seat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    private Long aircraftId;
-
+    @Column(name = "seat_number", nullable = false)
     private String seatNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "cabin_class_id")
-    private CabinClass cabinClass;
+    @Column(name = "row_num", nullable = false)
+    private Integer rowNum;
 
+    @Column(name = "column_letter", nullable = false)
+    private String columnLetter;
+
+    @Column(name = "seat_type")
     private String seatType;
 
-    // Getters & Setters
+    @Column(name = "seat_status")
+    private String seatStatus;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "price")
+    private Double price;
 
-    public Long getAircraftId() {
-        return aircraftId;
-    }
+    @Column(name = "currency")
+    private String currency;
 
-    public String getSeatNumber() {
-        return seatNumber;
-    }
+    @Version
+    private Integer version;
 
-    public CabinClass getCabinClass() {
-        return cabinClass;
-    }
+    @Column(name = "created_at")
+    private java.sql.Timestamp createdAt;
 
-    public String getSeatType() {
-        return seatType;
-    }
+    @Column(name = "updated_at")
+    private java.sql.Timestamp updatedAt;
 
-    public void setId(Long id) {
+    @ManyToOne
+    @JoinColumn(name = "seat_map_id")
+    private SeatMap seatMap;
+
+    @ManyToOne
+    @JoinColumn(name = "row_id")
+    private SeatRow seatRow;
+
+    // Constructors
+    public Seat() {}
+
+    public Seat(String id, String seatNumber) {
         this.id = id;
-    }
-
-    public void setAircraftId(Long aircraftId) {
-        this.aircraftId = aircraftId;
-    }
-
-    public void setSeatNumber(String seatNumber) {
         this.seatNumber = seatNumber;
     }
 
-    public void setCabinClass(CabinClass cabinClass) {
-        this.cabinClass = cabinClass;
-    }
+    // Getters & Setters (FULL)
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setSeatType(String seatType) {
-        this.seatType = seatType;
-    }
+    public String getSeatNumber() { return seatNumber; }
+    public void setSeatNumber(String seatNumber) { this.seatNumber = seatNumber; }
+
+    public Integer getRowNum() { return rowNum; }
+    public void setRowNum(Integer rowNum) { this.rowNum = rowNum; }
+
+    public String getColumnLetter() { return columnLetter; }
+    public void setColumnLetter(String columnLetter) { this.columnLetter = columnLetter; }
+
+    public String getSeatType() { return seatType; }
+    public void setSeatType(String seatType) { this.seatType = seatType; }
+
+    public String getSeatStatus() { return seatStatus; }
+    public void setSeatStatus(String seatStatus) { this.seatStatus = seatStatus; }
+
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
+
+    public String getCurrency() { return currency; }
+    public void setCurrency(String currency) { this.currency = currency; }
+
+    public Integer getVersion() { return version; }
+    public void setVersion(Integer version) { this.version = version; }
+
+    public SeatMap getSeatMap() { return seatMap; }
+    public void setSeatMap(SeatMap seatMap) { this.seatMap = seatMap; }
+
+    public SeatRow getSeatRow() { return seatRow; }
+    public void setSeatRow(SeatRow seatRow) { this.seatRow = seatRow; }
 }

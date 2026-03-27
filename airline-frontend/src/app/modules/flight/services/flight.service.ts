@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   FlightSearchParams,
@@ -14,43 +15,59 @@ export class FlightService {
   private base = environment.flightUrl;
 
   searchFlights(params: FlightSearchParams): Observable<FlightSearchResult> {
-    // 1. Calculate total passengers for the Java backend
-    const totalPassengers = (params.adults || 1) + (params.children || 0) + (params.infants || 0);
+    // 1. STRICT DATE FORMATTING (with 'any' cast to satisfy TypeScript)
+    const rawDate: any = params.departureDate;
+    const formattedDate =
+      rawDate instanceof Date
+        ? rawDate.toISOString().split('T')[0]
+        : String(rawDate).split('T')[0];
 
-    // 2. Build the parameters exactly as Spring Boot expects them
+    const cabin = (params.cabinClass || 'ECONOMY').toUpperCase();
+    const totalPassengers =
+      Number(params.adults || 1) +
+      Number(params.children || 0) +
+      Number(params.infants || 0);
+
     let httpParams = new HttpParams()
-      .set('origin',      params.origin)
+      .set('origin', params.origin)
       .set('destination', params.destination)
-      .set('date',        params.departureDate) // ✅ Changed to 'date'
-      .set('passengers',  totalPassengers)      // ✅ Changed to 'passengers'
-      .set('cabinClass',  params.cabinClass || 'ECONOMY');
-    // let httpParams = new HttpParams()
-    //   .set('origin', params.origin)
-    //   .set('destination', params.destination)
-    //   .set('departureDate', params.departureDate)
-    //   .set('tripType', params.tripType)
-    //   .set('adults', params.adults)
-    //   .set('children', params.children)
-    //   .set('infants', params.infants)
-    //   .set('cabinClass', params.cabinClass);
+      .set('date', formattedDate)
+      .set('passengers', totalPassengers)
+      .set('cabinClass', cabin);
 
     if (params.returnDate) {
-      httpParams = httpParams.set('returnDate', params.returnDate);
+      const rawRet: any = params.returnDate;
+      const retDate =
+        rawRet instanceof Date
+          ? rawRet.toISOString().split('T')[0]
+          : String(rawRet).split('T')[0];
+      httpParams = httpParams.set('returnDate', retDate);
     }
 
     return this.http
       .get<any>(`${this.base}/search`, { params: httpParams })
       .pipe(
         map((response) => {
-          // Grab the array whether it is called 'flights' (Java) or 'outbound' (Mock)
-          const flightList = response.flights || response.outbound || [];
-
+          // Bulletproof array extraction for flights
+          const flightList =
+            response?.flights ||
+            response?.outbound ||
+            (Array.isArray(response) ? response : []);
           return {
             outbound: flightList,
-            searchId: response.searchId || 'SRCH-' + Date.now(),
-            currency: response.currency || 'USD',
-            totalResults: response.totalResults || flightList.length,
+            searchId: response?.searchId || 'SRCH-' + Date.now(),
+            currency: response?.currency || 'USD',
+            totalResults: response?.totalResults || flightList.length,
           } as FlightSearchResult;
+        }),
+        catchError((err) => {
+          console.error('Flight Search API Error:', err);
+          return of({
+            outbound: [],
+            searchId: '',
+            currency: 'USD',
+            totalResults: 0,
+          } as FlightSearchResult);
         }),
       );
   }
@@ -59,17 +76,31 @@ export class FlightService {
     return this.http.get<Flight>(`${this.base}/${id}`);
   }
 
-  getPopularRoutes(): Observable<
-    { origin: string; destination: string; price: number }[]
-  > {
-    return this.http.get<any[]>(`${this.base}/popular-routes`);
+  getPopularRoutes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/popular-routes`).pipe(
+      catchError(() => of([])), // Prevents homepage crash if endpoint doesn't exist yet
+    );
   }
 
   getAirports(
     query: string,
   ): Observable<{ code: string; name: string; city: string }[]> {
-    return this.http.get<any[]>(`${this.base}/airports`, {
-      params: new HttpParams().set('q', query),
-    });
+    return this.http
+      .get<any>(`${this.base}/airports`, {
+        params: new HttpParams().set('q', query),
+      })
+      .pipe(
+        map((res) => {
+          // ✅ FIX: Handles raw arrays OR objects like { airports: [...] } from Java
+          if (Array.isArray(res)) return res;
+          if (res?.airports && Array.isArray(res.airports)) return res.airports;
+          if (res?.data && Array.isArray(res.data)) return res.data;
+          return [];
+        }),
+        catchError((err) => {
+          console.error('Airports Dropdown API Error:', err);
+          return of([]); // Keeps dropdown from permanently breaking on 500 error
+        }),
+      );
   }
 }

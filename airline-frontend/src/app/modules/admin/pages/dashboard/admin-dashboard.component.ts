@@ -890,19 +890,10 @@ export class AdminDashboardComponent implements OnInit {
         this.loading.set(false);
       },
     });
-    this.http
-      .get<any[]>(`${this.base}/admin/aircraft`)
-      .subscribe({ next: (d) => this.aircraft.set(d) });
-    this.http
-      .get<any[]>(`${this.base}/admin/airports`)
-      .subscribe({ next: (d) => this.airports.set(d) });
-    this.http
-      .get<any[]>(`${this.base}/admin/crew`)
-      .subscribe({ next: (d) => this.crews.set(d) });
-
-    // ── 2. MOCK DATA CALL (Caught by the Interceptor, returns flights.json) ──
+    // ── 2. LIVE FLIGHT CALL (Calls your flight-service via environment.flightUrl) ──
     this.http.get<any>(environment.flightUrl).subscribe({
       next: (d) => {
+        // Bulletproof array extraction
         const flightList = Array.isArray(d) ? d : d.flights || [];
         this.flights.set(flightList);
       },

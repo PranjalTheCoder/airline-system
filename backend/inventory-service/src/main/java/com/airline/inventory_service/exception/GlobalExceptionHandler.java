@@ -1,32 +1,49 @@
 package com.airline.inventory_service.exception;
 
-
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import com.airline.inventory_service.dto.response.ApiResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // 🔴 Not Found
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ApiResponse<String> handleNotFound(ResourceNotFoundException ex) {
-        return new ApiResponse<>(false, ex.getMessage(), null);
+    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
+
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()),
+                HttpStatus.NOT_FOUND
+        );
     }
 
-    @ExceptionHandler(BusinessException.class)
-    public ApiResponse<String> handleBusiness(BusinessException ex) {
-        return new ApiResponse<>(false, ex.getMessage(), null);
+    // 🔴 Seat Error
+    @ExceptionHandler(SeatUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleSeatError(SeatUnavailableException ex) {
+
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value()),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResponse<String> handleValidation(MethodArgumentNotValidException ex) {
-        return new ApiResponse<>(false, "Validation failed", null);
+    // 🔴 External Service Error
+    @ExceptionHandler(ExternalServiceException.class)
+    public ResponseEntity<ErrorResponse> handleExternalError(ExternalServiceException ex) {
+
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse(ex.getMessage(), HttpStatus.SERVICE_UNAVAILABLE.value()),
+                HttpStatus.SERVICE_UNAVAILABLE
+        );
     }
 
+    // 🔴 Generic Error
     @ExceptionHandler(Exception.class)
-    public ApiResponse<String> handleGeneric(Exception ex) {
-        return new ApiResponse<>(false, "Something went wrong", null);
+    public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
+    	ex.printStackTrace();
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR.value()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 }
