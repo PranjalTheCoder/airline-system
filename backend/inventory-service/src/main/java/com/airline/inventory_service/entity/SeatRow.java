@@ -1,7 +1,13 @@
 package com.airline.inventory_service.entity;
 
-import jakarta.persistence.*;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "seat_rows")
@@ -11,7 +17,7 @@ public class SeatRow {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "row_num", nullable = false)
+    @Column(name = "row_num")
     private Integer rowNum;
 
     @Column(name = "is_exit_row")
@@ -20,43 +26,60 @@ public class SeatRow {
     @Column(name = "is_bulkhead")
     private Boolean isBulkhead;
 
-    @Column(name = "created_at")
-    private java.sql.Timestamp createdAt;
-
     @ManyToOne
     @JoinColumn(name = "seat_map_id")
     private SeatMap seatMap;
 
-    @OneToMany(mappedBy = "seatRow", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Seat> seats;
+    // --- Constructors ---
+    public SeatRow() {
+        // Default constructor required by JPA
+    }
 
-    // Constructors
-    public SeatRow() {}
-
-    public SeatRow(Integer rowNum, Boolean isExitRow) {
+    public SeatRow(Integer rowNum, Boolean isExitRow, Boolean isBulkhead, SeatMap seatMap) {
         this.rowNum = rowNum;
+        this.isExitRow = isExitRow;
+        this.isBulkhead = isBulkhead;
+        this.seatMap = seatMap;
+    }
+
+    // --- Getters and Setters ---
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getRowNum() {
+        return rowNum;
+    }
+
+    public void setRowNum(Integer rowNum) {
+        this.rowNum = rowNum;
+    }
+
+    public Boolean getIsExitRow() {
+        return isExitRow;
+    }
+
+    public void setIsExitRow(Boolean isExitRow) {
         this.isExitRow = isExitRow;
     }
 
-    // Getters & Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Boolean getIsBulkhead() {
+        return isBulkhead;
+    }
 
-    public Integer getRowNum() { return rowNum; }
-    public void setRowNum(Integer rowNum) { this.rowNum = rowNum; }
+    public void setIsBulkhead(Boolean isBulkhead) {
+        this.isBulkhead = isBulkhead;
+    }
 
-    public Boolean getIsExitRow() { return isExitRow; }
-    public void setIsExitRow(Boolean isExitRow) { this.isExitRow = isExitRow; }
+    public SeatMap getSeatMap() {
+        return seatMap;
+    }
 
-    public Boolean getIsBulkhead() { return isBulkhead; }
-    public void setIsBulkhead(Boolean isBulkhead) { this.isBulkhead = isBulkhead; }
-
-    public java.sql.Timestamp getCreatedAt() { return createdAt; }
-    public void setCreatedAt(java.sql.Timestamp createdAt) { this.createdAt = createdAt; }
-
-    public SeatMap getSeatMap() { return seatMap; }
-    public void setSeatMap(SeatMap seatMap) { this.seatMap = seatMap; }
-
-    public List<Seat> getSeats() { return seats; }
-    public void setSeats(List<Seat> seats) { this.seats = seats; }
+    public void setSeatMap(SeatMap seatMap) {
+        this.seatMap = seatMap;
+    }
 }

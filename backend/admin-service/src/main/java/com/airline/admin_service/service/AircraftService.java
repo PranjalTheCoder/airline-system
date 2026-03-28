@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 
 import com.airline.admin_service.dto.request.AircraftRequestDTO;
 import com.airline.admin_service.dto.response.AircraftDTO;
+import com.airline.admin_service.dto.response.AircraftModelResponseDTO;
 import com.airline.admin_service.entity.Aircraft;
+import com.airline.admin_service.exception.ResourceNotFoundException;
 import com.airline.admin_service.mapper.AircraftMapper;
 import com.airline.admin_service.repository.AircraftRepository;
 
@@ -109,5 +111,13 @@ public class AircraftService {
     
     public void delete(String id) {
         repository.deleteById(id);
+    }
+    
+    public AircraftModelResponseDTO getByModel(String model) {
+
+        Aircraft entity = repository.findByModel(model)
+                .orElseThrow(() -> new ResourceNotFoundException("Aircraft not found"));
+
+        return mapper.toModelResponse(entity);
     }
 }

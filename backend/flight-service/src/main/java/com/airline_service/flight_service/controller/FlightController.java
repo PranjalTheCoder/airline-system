@@ -3,14 +3,18 @@ package com.airline_service.flight_service.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.airline_service.flight_service.aggregation.FlightAggregationService;
+import com.airline_service.flight_service.client.AdminClient;
 import com.airline_service.flight_service.dto.AirportDTO;
 import com.airline_service.flight_service.dto.AirportListResponseDTO;
+import com.airline_service.flight_service.dto.FlightBasicDTO;
 import com.airline_service.flight_service.dto.FlightSearchResponseDTO;
+import com.airline_service.flight_service.entity.FlightEntity;
 import com.airline_service.flight_service.service.AirportService;
 import com.airline_service.flight_service.service.FlightService;
 import com.airline_service.flight_service.service.RouteService;
@@ -23,15 +27,18 @@ public class FlightController {
     private final FlightService flightService;
     private final RouteService routeService;
     private final AirportService airportService;
+    private final AdminClient adminClient;
 
     public FlightController(FlightAggregationService aggregationService,
             FlightService flightService,
             RouteService routeService,
-            AirportService airportService) {
+            AirportService airportService, 
+            AdminClient adminClient) {
 			this.aggregationService = aggregationService;
 			this.flightService = flightService;
 			this.routeService = routeService;
 			this.airportService = airportService;
+			this.adminClient = adminClient;
     }
 
 //    // 🔥 SEARCH
@@ -96,4 +103,19 @@ public class FlightController {
 //
 //        return aggregationService.buildResponse(flights, dummyRoute);
 //    }
+    @GetMapping("/number/{flightNumber}")
+    public FlightBasicDTO getFlightBasic(@PathVariable String flightNumber) {
+
+        FlightEntity flight = flightService.getFlightByFlightNumber(flightNumber);
+
+        if (flight == null) {
+            throw new RuntimeException("Flight not fount: "+ flightNumber);
+        }
+
+       
+        return new FlightBasicDTO(
+                flight.getFlightNumber(),
+                flight.getAircraftId()
+        );
+    }
 }

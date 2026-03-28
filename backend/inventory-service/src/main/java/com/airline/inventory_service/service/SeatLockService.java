@@ -1,7 +1,15 @@
 package com.airline.inventory_service.service;
 
-public interface SeatLockService {
+import org.springframework.stereotype.Service;
 
-    String holdSeat(String seatId, String userId);
+@Service
+public class SeatLockService {
 
+    public String holdSeat(String seatId) {
+        return "Seat locked: " + seatId;
+    }
+
+    public String releaseSeat(String seatId) {
+        return "Seat released: " + seatId;
+    }
 }

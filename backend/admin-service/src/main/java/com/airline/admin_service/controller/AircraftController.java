@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.airline.admin_service.dto.request.AircraftRequestDTO;
 import com.airline.admin_service.dto.response.AircraftDTO;
+import com.airline.admin_service.dto.response.AircraftModelResponseDTO;
 import com.airline.admin_service.service.AircraftService;
 
 @RestController
@@ -62,5 +63,10 @@ public class AircraftController {
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable String id) {
 	        service.delete(id);
+	    }
+	    
+	    @GetMapping("/model/{model}")
+	    public AircraftModelResponseDTO getByModel(@PathVariable String model) {
+	        return service.getByModel(model);
 	    }
 }

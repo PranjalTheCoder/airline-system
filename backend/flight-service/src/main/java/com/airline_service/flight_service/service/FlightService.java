@@ -27,4 +27,8 @@ public class FlightService {
     public FlightEntity getFlightById(Long id) {
         return flightRepository.findById(id).orElse(null);
     }
+    
+    public FlightEntity getFlightByFlightNumber(String flightNumber) {
+        return flightRepository.findByFlightNumber(flightNumber).orElse(null);
+    }
 }

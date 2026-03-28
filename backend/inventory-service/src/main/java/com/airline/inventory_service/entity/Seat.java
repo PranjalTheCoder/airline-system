@@ -1,21 +1,31 @@
 package com.airline.inventory_service.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "seats")
+@Table(name = "seats",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"seat_map_id", "seat_number"}))
 public class Seat {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "seat_number", nullable = false)
+    @Column(name = "seat_number")
     private String seatNumber;
 
-    @Column(name = "row_num", nullable = false)
+    @Column(name = "row_num")
     private Integer rowNum;
 
-    @Column(name = "column_letter", nullable = false)
+    @Column(name = "column_letter")
     private String columnLetter;
 
     @Column(name = "seat_type")
@@ -24,20 +34,11 @@ public class Seat {
     @Column(name = "seat_status")
     private String seatStatus;
 
-    @Column(name = "price")
     private Double price;
 
-    @Column(name = "currency")
-    private String currency;
+    private String currency = "INR";
 
-    @Version
     private Integer version;
-
-    @Column(name = "created_at")
-    private java.sql.Timestamp createdAt;
-
-    @Column(name = "updated_at")
-    private java.sql.Timestamp updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "seat_map_id")
@@ -45,47 +46,114 @@ public class Seat {
 
     @ManyToOne
     @JoinColumn(name = "row_id")
-    private SeatRow seatRow;
+    private SeatRow row;
 
-    // Constructors
-    public Seat() {}
+    // --- Constructors ---
+    public Seat() {
+        // Default constructor required by JPA
+    }
 
-    public Seat(String id, String seatNumber) {
+    public Seat(String seatNumber, Integer rowNum, String columnLetter,
+                String seatType, String seatStatus, Double price,
+                String currency, Integer version, SeatMap seatMap, SeatRow row) {
+        this.seatNumber = seatNumber;
+        this.rowNum = rowNum;
+        this.columnLetter = columnLetter;
+        this.seatType = seatType;
+        this.seatStatus = seatStatus;
+        this.price = price;
+        this.currency = currency;
+        this.version = version;
+        this.seatMap = seatMap;
+        this.row = row;
+    }
+
+    // --- Getters and Setters ---
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSeatNumber() {
+        return seatNumber;
+    }
+
+    public void setSeatNumber(String seatNumber) {
         this.seatNumber = seatNumber;
     }
 
-    // Getters & Setters (FULL)
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public Integer getRowNum() {
+        return rowNum;
+    }
 
-    public String getSeatNumber() { return seatNumber; }
-    public void setSeatNumber(String seatNumber) { this.seatNumber = seatNumber; }
+    public void setRowNum(Integer rowNum) {
+        this.rowNum = rowNum;
+    }
 
-    public Integer getRowNum() { return rowNum; }
-    public void setRowNum(Integer rowNum) { this.rowNum = rowNum; }
+    public String getColumnLetter() {
+        return columnLetter;
+    }
 
-    public String getColumnLetter() { return columnLetter; }
-    public void setColumnLetter(String columnLetter) { this.columnLetter = columnLetter; }
+    public void setColumnLetter(String columnLetter) {
+        this.columnLetter = columnLetter;
+    }
 
-    public String getSeatType() { return seatType; }
-    public void setSeatType(String seatType) { this.seatType = seatType; }
+    public String getSeatType() {
+        return seatType;
+    }
 
-    public String getSeatStatus() { return seatStatus; }
-    public void setSeatStatus(String seatStatus) { this.seatStatus = seatStatus; }
+    public void setSeatType(String seatType) {
+        this.seatType = seatType;
+    }
 
-    public Double getPrice() { return price; }
-    public void setPrice(Double price) { this.price = price; }
+    public String getSeatStatus() {
+        return seatStatus;
+    }
 
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
+    public void setSeatStatus(String seatStatus) {
+        this.seatStatus = seatStatus;
+    }
 
-    public Integer getVersion() { return version; }
-    public void setVersion(Integer version) { this.version = version; }
+    public Double getPrice() {
+        return price;
+    }
 
-    public SeatMap getSeatMap() { return seatMap; }
-    public void setSeatMap(SeatMap seatMap) { this.seatMap = seatMap; }
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 
-    public SeatRow getSeatRow() { return seatRow; }
-    public void setSeatRow(SeatRow seatRow) { this.seatRow = seatRow; }
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public SeatMap getSeatMap() {
+        return seatMap;
+    }
+
+    public void setSeatMap(SeatMap seatMap) {
+        this.seatMap = seatMap;
+    }
+
+    public SeatRow getRow() {
+        return row;
+    }
+
+    public void setRow(SeatRow row) {
+        this.row = row;
+    }
 }

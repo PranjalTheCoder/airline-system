@@ -433,3 +433,7 @@ SET aircraft_id = CASE id
     WHEN 22 THEN 'AC011'
 END
 WHERE id BETWEEN 1 AND 22;
+
+use flight_db;
+select flight_number, aircraft_id FROM flights;
+

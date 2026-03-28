@@ -2,10 +2,10 @@ package com.airline.inventory_service.dto;
 
 public class LegendDTO {
 
-    private String available;
-    private String occupied;
-    private String selected;
-    private String premium;
+	 private String available = "Available";
+	 private String occupied = "Occupied";
+	    private String selected = "Selected";
+	    private String premium = "Premium / Extra Legroom";
 
     public LegendDTO() {}
 

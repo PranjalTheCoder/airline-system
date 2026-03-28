@@ -2,7 +2,10 @@ package com.airline.inventory_service.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
 
 import com.airline.inventory_service.dto.LegendDTO;
 import com.airline.inventory_service.dto.RowDTO;
@@ -12,104 +15,69 @@ import com.airline.inventory_service.dto.SeatMapResponseDTO;
 import com.airline.inventory_service.entity.Seat;
 import com.airline.inventory_service.entity.SeatMap;
 import com.airline.inventory_service.entity.SeatRow;
-
+@Component
 public class SeatMapMapper {
 
-    // MAIN METHOD
-    public static SeatMapResponseDTO toResponseDTO(SeatMap seatMap) {
+    public SeatMapResponseDTO map(
+            SeatMap seatMap,
+            List<SeatRow> rows,
+            List<Seat> seats) {
 
-        List<SeatMapDTO> seatMapDTOList = new ArrayList<>();
-        seatMapDTOList.add(toSeatMapDTO(seatMap));
+        Map<Integer, List<Seat>> seatByRow =
+                seats.stream().collect(Collectors.groupingBy(Seat::getRowNum));
 
-        return new SeatMapResponseDTO(seatMapDTOList);
-    }
+        List<RowDTO> rowDTOList = new ArrayList<>();
 
-    // SeatMap → SeatMapDTO
-    public static SeatMapDTO toSeatMapDTO(SeatMap seatMap) {
+        for (SeatRow row : rows) {
 
-        SeatMapDTO dto = new SeatMapDTO();
-        dto.setFlightId(seatMap.getFlightId());
-        dto.setAircraft(seatMap.getAircraftModel());
-        dto.setCabinClass(seatMap.getCabinClass());
+            RowDTO rowDTO = new RowDTO();
+            rowDTO.setRowNumber(row.getRowNum());
+            rowDTO.setIsExitRow(row.getIsExitRow());
 
-        // Rows
-        List<RowDTO> rowDTOList = seatMap.getRows()
-                .stream()
-                .map(SeatMapMapper::toRowDTO)
-                .collect(Collectors.toList());
+            List<SeatDTO> seatDTOs = new ArrayList<>();
 
-        dto.setRows(rowDTOList);
+            for (Seat seat : seatByRow.get(row.getRowNum())) {
 
-        // Legend (static)
-        dto.setLegend(buildLegend());
+                SeatDTO dto = new SeatDTO();
 
-        return dto;
-    }
+                dto.setId(seat.getSeatNumber());
+                dto.setSeatNumber(seat.getSeatNumber());
+                dto.setRow(seat.getRowNum());
+                dto.setColumn(seat.getColumnLetter());
 
-    // Row → RowDTO
-    private static RowDTO toRowDTO(SeatRow row) {
+                dto.setStatus(seat.getSeatStatus());
+                dto.setType(seat.getSeatType());
+                dto.setPrice(seat.getPrice());
+                dto.setCurrency("USD");
 
-        RowDTO dto = new RowDTO();
-        dto.setRowNumber(row.getRowNum());
-        dto.setIsExitRow(row.getIsExitRow());
+                // FEATURES
+                List<String> features = new ArrayList<>();
 
-        List<SeatDTO> seatDTOList = row.getSeats()
-                .stream()
-                .map(SeatMapMapper::toSeatDTO)
-                .collect(Collectors.toList());
+                if ("WINDOW".equals(seat.getSeatType()))
+                    features.add("WINDOW");
 
-        dto.setSeats(seatDTOList);
+                if (row.getIsExitRow())
+                    features.add("EXTRA_LEGROOM");
 
-        return dto;
-    }
+                dto.setFeatures(features);
 
-    // Seat → SeatDTO
-    private static SeatDTO toSeatDTO(Seat seat) {
+                seatDTOs.add(dto);
+            }
 
-        SeatDTO dto = new SeatDTO();
-
-        dto.setId(seat.getId());
-        dto.setSeatNumber(seat.getSeatNumber());
-
-        dto.setRow(seat.getRowNum());
-        dto.setColumn(seat.getColumnLetter());
-
-        dto.setStatus(seat.getSeatStatus());
-        dto.setType(seat.getSeatType());
-
-        dto.setPrice(seat.getPrice());
-        dto.setCurrency(seat.getCurrency());
-
-        // Features
-        List<String> features = new ArrayList<>();
-
-        if ("WINDOW".equals(seat.getSeatType())) {
-            features.add("WINDOW");
-        }
-        if ("AISLE".equals(seat.getSeatType())) {
-            features.add("AISLE");
-        }
-        if ("PREMIUM".equals(seat.getSeatType())) {
-            features.add("RECLINE");
+            rowDTO.setSeats(seatDTOs);
+            rowDTOList.add(rowDTO);
         }
 
-        if (seat.getSeatRow() != null && Boolean.TRUE.equals(seat.getSeatRow().getIsExitRow())) {
-            features.add("EXIT_ROW");
-            features.add("EXTRA_LEGROOM");
-        }
+        SeatMapDTO mapDTO = new SeatMapDTO();
+        mapDTO.setFlightId(seatMap.getFlightId());
+        mapDTO.setAircraft(seatMap.getAircraftModel());
+        mapDTO.setCabinClass(seatMap.getCabinClass());
+        mapDTO.setRows(rowDTOList);
+        mapDTO.setLegend(new LegendDTO());
 
-        dto.setFeatures(features);
+        SeatMapResponseDTO response = new SeatMapResponseDTO();
+        response.setSeatMaps(List.of(mapDTO));
 
-        return dto;
-    }
-
-    // Legend
-    private static LegendDTO buildLegend() {
-        return new LegendDTO(
-                "Available",
-                "Occupied",
-                "Selected",
-                "Premium / Extra Legroom"
-        );
+        return response;
     }
 }

@@ -106,3 +106,6 @@ INSERT INTO aircraft (id, registration, model, manufacturer, capacity, cabin_con
 ('AC016', 'N-SW016', 'Boeing 757-300', 'Boeing', 243, '{"first":null,"business":24,"premiumEconomy":30,"economy":189}', 'ACTIVE', 2014, '2025-10-30', '2026-04-30'),
 ('AC017', 'N-SW017', 'Airbus A220-100', 'Airbus', 120, '{"first":null,"business":12,"premiumEconomy":null,"economy":108}', 'ACTIVE', 2020, '2025-12-22', '2026-06-22'),
 ('AC018', 'N-SW018', 'Comac C919', 'Comac', 174, '{"first":null,"business":20,"premiumEconomy":null,"economy":154}', 'ACTIVE', 2023, '2025-11-05', '2026-05-05');
+
+
+SELECT * FROM Aircraft;

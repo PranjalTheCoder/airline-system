@@ -1,7 +1,7 @@
 package com.airline.inventory_service.entity;
 
 import jakarta.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "seat_locks")
@@ -11,6 +11,9 @@ public class SeatLock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "seat_id")
+    private Long seatId;
+
     @Column(name = "flight_id")
     private String flightId;
 
@@ -18,32 +21,70 @@ public class SeatLock {
     private String lockedBy;
 
     @Column(name = "lock_expiry")
-    private Timestamp lockExpiry;
+    private LocalDateTime lockExpiry;
 
-    @Column(name = "status")
     private String status;
 
-    @ManyToOne
-    @JoinColumn(name = "seat_id")
-    private Seat seat;
+    // --- Constructors ---
+    public SeatLock() {
+        // Default constructor required by JPA
+    }
 
-    public SeatLock() {}
+    public SeatLock(Long seatId, String flightId, String lockedBy,
+                    LocalDateTime lockExpiry, String status) {
+        this.seatId = seatId;
+        this.flightId = flightId;
+        this.lockedBy = lockedBy;
+        this.lockExpiry = lockExpiry;
+        this.status = status;
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // --- Getters and Setters ---
+    public Long getId() {
+        return id;
+    }
 
-    public String getFlightId() { return flightId; }
-    public void setFlightId(String flightId) { this.flightId = flightId; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getLockedBy() { return lockedBy; }
-    public void setLockedBy(String lockedBy) { this.lockedBy = lockedBy; }
+    public Long getSeatId() {
+        return seatId;
+    }
 
-    public Timestamp getLockExpiry() { return lockExpiry; }
-    public void setLockExpiry(Timestamp lockExpiry) { this.lockExpiry = lockExpiry; }
+    public void setSeatId(Long seatId) {
+        this.seatId = seatId;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getFlightId() {
+        return flightId;
+    }
 
-    public Seat getSeat() { return seat; }
-    public void setSeat(Seat seat) { this.seat = seat; }
+    public void setFlightId(String flightId) {
+        this.flightId = flightId;
+    }
+
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    public void setLockedBy(String lockedBy) {
+        this.lockedBy = lockedBy;
+    }
+
+    public LocalDateTime getLockExpiry() {
+        return lockExpiry;
+    }
+
+    public void setLockExpiry(LocalDateTime lockExpiry) {
+        this.lockExpiry = lockExpiry;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

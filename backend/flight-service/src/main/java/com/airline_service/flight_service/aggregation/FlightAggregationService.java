@@ -352,4 +352,113 @@ public class FlightAggregationService {
 
         return new FlightSearchResponseDTO(response);
     }
+    public FlightSearchResponseDTO getFlightByFlightNumber(
+            String flightNumber,
+            String date,
+            Integer passengers,
+            String cabinClass) {
+
+        FlightEntity flight = flightService.getFlightByFlightNumber(flightNumber);
+
+        if (flight == null) {
+            return new FlightSearchResponseDTO(new ArrayList<>());
+        }
+
+        RouteEntity route = routeService.getRouteById(flight.getRouteId());
+
+        if (route == null) {
+            return new FlightSearchResponseDTO(new ArrayList<>());
+        }
+
+        List<FlightInstanceEntity> instances = instanceService.getInstances(flight.getId());
+
+        List<FlightDTO> response = new ArrayList<>();
+
+        for (FlightInstanceEntity instance : instances) {
+
+            // ✅ DATE FILTER
+            if (date != null) {
+                String instanceDate = instance.getDepartureDateTime().toLocalDate().toString();
+                if (!instanceDate.equals(date)) continue;
+            }
+
+            FlightDTO dto = new FlightDTO();
+
+            dto.setId(String.valueOf(instance.getId()));
+            dto.setFlightNumber(flight.getFlightNumber());
+
+            // ✅ Airline
+            AirlineEntity airline = airlineService.getAirline(flight.getAirlineId());
+            if (airline != null) {
+                dto.setAirline(airline.getName());
+                dto.setAirlineCode(airline.getAirlineCode());
+            }
+
+            // ✅ Aircraft
+            dto.setAircraftType(adminClient.getAircraftModel(flight.getAircraftId()));
+
+            // ✅ Airports
+            dto.setOrigin(adminClient.getAirport(route.getOriginCode()));
+            dto.setDestination(adminClient.getAirport(route.getDestinationCode()));
+
+            // ✅ Time
+            dto.setDepartureTime(instance.getDepartureDateTime().toString());
+            dto.setArrivalTime(instance.getArrivalDateTime().toString());
+
+            int duration = (int) java.time.Duration.between(
+                    instance.getDepartureDateTime(),
+                    instance.getArrivalDateTime()
+            ).toMinutes();
+
+            dto.setDurationMinutes(duration);
+
+            dto.setStops(flight.getStops());
+            dto.setStatus(instance.getStatus());
+            dto.setGate(instance.getGate());
+            dto.setTerminal(instance.getTerminal());
+
+            // ✅ Amenities
+            dto.setAmenities(amenityService.getAmenitiesByFlightId(flight.getId()));
+
+            // ✅ Cabin Classes
+            List<CabinClassEntity> cabins = cabinClassService.getCabinClasses(flight.getId());
+            List<CabinClassDTO> cabinDTOs = new ArrayList<>();
+
+            for (CabinClassEntity c : cabins) {
+
+                if (cabinClass != null &&
+                    !c.getClassType().equalsIgnoreCase(cabinClass)) continue;
+
+                if (passengers != null &&
+                    c.getAvailableSeats() < passengers) continue;
+
+                CabinClassDTO cabinDTO = new CabinClassDTO();
+
+                cabinDTO.setType(c.getClassType());
+                cabinDTO.setBasePrice(c.getBasePrice());
+                cabinDTO.setCurrency(c.getCurrency());
+                cabinDTO.setAvailableSeats(c.getAvailableSeats());
+                cabinDTO.setTotalSeats(c.getTotalSeats());
+
+                BaggageDTO baggage = new BaggageDTO();
+                baggage.setCabin(c.getCabinBaggage());
+                baggage.setChecked(c.getCheckedBaggage());
+
+                cabinDTO.setBaggage(baggage);
+
+                cabinDTOs.add(cabinDTO);
+            }
+
+            if (cabinDTOs.isEmpty()) continue;
+
+            dto.setCabinClasses(cabinDTOs);
+
+            response.add(dto);
+        }
+
+        return new FlightSearchResponseDTO(response);
+    }
+
+
+	
 }
