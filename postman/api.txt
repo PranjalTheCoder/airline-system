@@ -1,0 +1,29 @@
+Aircraft by Id http://localhost:8080/api/admin/aircraft/AC002
+
+{
+    "id": "AC002",
+    "registration": "N-SW002",
+    "model": "Airbus A350-900",
+    "manufacturer": "Airbus",
+    "capacity": 325,
+    "cabinConfig": {
+        "first": 10,
+        "business": 36,
+        "premiumEconomy": 40,
+        "economy": 239
+    },
+    "status": "ACTIVE",
+    "yearBuilt": 2020,
+    "lastMaintenance": "2026-02-10",
+    "nextMaintenance": "2026-08-10"
+}
+
+flight by flightNumber
+http://localhost:8080/api/flights/number/AI202
+{
+    "flightNumber": "AI202",
+    "aircraftId": "AC002"
+}
+
+seatMap api
+http://localhost:8083/api/inventory/seatmap?flightId=AI202&cabinClass=ECONOMY
