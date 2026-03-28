@@ -9,7 +9,7 @@ import com.airline.inventory_service.entity.Seat;
 
 public interface SeatRepository extends JpaRepository<Seat, String> {
 
-    List<Seat> findBySeatMapId(Long seatMapId);
+    List<Seat> findBySeatMap_Id(Long seatMapId);
 
     Optional<Seat> findBySeatNumberAndSeatMapId(String seatNumber, Long seatMapId);
 

@@ -24,24 +24,61 @@ public class SeatGeneratorService {
 
     public void generateSeats(SeatMap seatMap, AircraftDTO aircraft, String cabinClass) {
 
-        int totalSeats = aircraft.getCabinConfig().get(cabinClass.toLowerCase());
-        String layout = aircraft.getSeatLayout(); // 3-3-3
+    	System.out.println("===== GENERATOR STARTED =====");
+        
+        
+        String layout = aircraft.getSeatLayout() != null
+                ? aircraft.getSeatLayout()
+                : "3-3-3";
 
-        int seatsPerRow = (int) (layout.chars()
-                .filter(ch -> ch == '-')
-                .count() + 1);
+//        String[] parts = layout.split("-");
+//
+//        int seatsPerRow = 6;
+//
+//        for (String part : parts) {
+//            seatsPerRow += Integer.parseInt(part);
+//        }        
+ 
+        
+        
 
-        seatsPerRow = layout.replace("-", "").length();
+//        int seatsPerRow = (int) (layout.chars()
+//                .filter(ch -> ch == '-')
+//                .count() + 1);
+      
 
-        char[] columns = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+//        seatsPerRow = layout.replace("-", "").length();
+        int seatsPerRow = 6;
+        
+        System.out.println("Layout: " + layout);
+        System.out.println("SeatsPerRow: " + seatsPerRow);
+        
+//        Integer totalSeats = aircraft.getCabinConfig().get(cabinClass.toLowerCase());
 
-        int rows = totalSeats / seatsPerRow;
+        char[] columns = {'A','B','C','D','E','F'};
+        
+//        if (totalSeats == null) {
+//        	throw new RuntimeException("Invalid cabinClass: " + cabinClass);
+//        }
+//        
+//        System.out.println("TotalSeats: " + totalSeats);
+
+//        int rows = totalSeats / seatsPerRow;
+        int rows = 6;
+        
+        System.out.println("TotalRows: " + rows);
 
         int startRow = 10;
+        
+//        System.out.println("Layout: " + layout);
+//        System.out.println("Seats per row: " + seatsPerRow);
+//        System.out.println("Total seats: " + totalSeats);
+//        System.out.println("Total rows: " + rows);
 
         for (int i = 0; i < rows; i++) {
 
             int rowNum = startRow + i;
+            System.out.println("Creating row: " + rowNum);
 
             SeatRow row = new SeatRow();
             row.setRowNum(rowNum);
@@ -49,6 +86,8 @@ public class SeatGeneratorService {
             row.setIsExitRow(rowNum == 12 || rowNum == 24);
 
             row = rowRepo.save(row);
+            
+//            System.out.println("Saved Row: " + rowNum);
 
             for (int j = 0; j < seatsPerRow; j++) {
 
@@ -60,9 +99,9 @@ public class SeatGeneratorService {
                 seat.setColumnLetter(String.valueOf(col));
 
                 // TYPE
-                if (j == 0 || j == seatsPerRow - 1)
+                if (col == 'A' || col == 'F')
                     seat.setSeatType("WINDOW");
-                else if (j == 2 || j == seatsPerRow - 3)
+                else if (col == 'C' || col == 'D')
                     seat.setSeatType("AISLE");
                 else
                     seat.setSeatType("STANDARD");
@@ -75,5 +114,6 @@ public class SeatGeneratorService {
                 seatRepo.save(seat);
             }
         }
+        System.out.println("===== GENERATOR FINISHED =====");
     }
 }

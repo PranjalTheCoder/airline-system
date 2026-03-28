@@ -61,12 +61,22 @@ public class SeatMapAggregationService {
 
         if (existing.isPresent()) {
             seatMap = existing.get();
+
+            List<Seat> seats = seatRepo.findBySeatMap_Id(seatMap.getId());
+
+            // 🔥 IMPORTANT FIX
+            if (seats.isEmpty()) {
+                System.out.println("⚠️ Empty seat map found → regenerating");
+
+                FlightDTO flight = flightClient.getFlight(flightId);
+                AircraftDTO aircraft = adminClient.getAircraft(flight.getAircraftId());
+
+                generator.generateSeats(seatMap, aircraft, cabinClass);
+            }
+
         } else {
 
-            // CALL FLIGHT SERVICE
             FlightDTO flight = flightClient.getFlight(flightId);
-
-            // CALL ADMIN SERVICE
             AircraftDTO aircraft = adminClient.getAircraft(flight.getAircraftId());
 
             seatMap = new SeatMap();
@@ -76,12 +86,13 @@ public class SeatMapAggregationService {
 
             seatMap = seatMapRepo.save(seatMap);
 
-            // GENERATE SEATS
             generator.generateSeats(seatMap, aircraft, cabinClass);
         }
 
-        List<Seat> seats = seatRepo.findBySeatMapId(seatMap.getId());
-        List<SeatRow> rows = rowRepo.findBySeatMapId(seatMap.getId());
+        List<Seat> seats = seatRepo.findBySeatMap_Id(seatMap.getId());
+        List<SeatRow> rows = rowRepo.findBySeatMap_Id(seatMap.getId());
+        System.out.println("Rows count: " + rows.size());
+        System.out.println("Seats count: " + seats.size());
 
         // APPLY PRICING
         seats.forEach(s -> s.setPrice(pricing.calculatePrice(s.getSeatType())));

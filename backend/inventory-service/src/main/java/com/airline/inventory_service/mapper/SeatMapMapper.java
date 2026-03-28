@@ -38,28 +38,57 @@ public class SeatMapMapper {
 
             for (Seat seat : seatByRow.get(row.getRowNum())) {
 
-                SeatDTO dto = new SeatDTO();
+            	SeatDTO dto = new SeatDTO();
 
-                dto.setId(seat.getSeatNumber());
-                dto.setSeatNumber(seat.getSeatNumber());
-                dto.setRow(seat.getRowNum());
-                dto.setColumn(seat.getColumnLetter());
+            	dto.setId(seat.getSeatNumber());
+            	dto.setSeatNumber(seat.getSeatNumber());
 
-                dto.setStatus(seat.getSeatStatus());
-                dto.setType(seat.getSeatType());
-                dto.setPrice(seat.getPrice());
-                dto.setCurrency("USD");
+            	dto.setRow(seat.getRowNum());
+            	dto.setColumn(seat.getColumnLetter());
 
-                // FEATURES
-                List<String> features = new ArrayList<>();
+            	dto.setStatus(seat.getSeatStatus());
 
-                if ("WINDOW".equals(seat.getSeatType()))
-                    features.add("WINDOW");
+            	// 🔥 TYPE + PRICE + FEATURES LOGIC
 
-                if (row.getIsExitRow())
-                    features.add("EXTRA_LEGROOM");
+            	List<String> features = new ArrayList<>();
 
-                dto.setFeatures(features);
+            	boolean isWindow = seat.getColumnLetter().equals("A") || seat.getColumnLetter().equals("F");
+
+            	if (row.getIsExitRow()) {
+
+            	    // ✅ TYPE
+            	    dto.setType("EXTRA_LEGROOM");
+
+            	    // ✅ PRICE
+            	    if (isWindow) {
+            	        dto.setPrice(45.0);
+            	        features.add("WINDOW");
+            	    } else {
+            	        dto.setPrice(40.0);
+            	    }
+
+            	    // ✅ FEATURES
+            	    features.add("EXTRA_LEGROOM");
+            	    features.add("EXIT_ROW");
+
+            	} else {
+
+            	    // NORMAL SEAT LOGIC
+            	    String type = seat.getSeatType();
+            	    dto.setType(type);
+
+            	    if ("WINDOW".equals(type)) {
+            	        dto.setPrice(25.0);
+            	        features.add("WINDOW");
+            	    } else if ("AISLE".equals(type)) {
+            	        dto.setPrice(20.0);
+            	    } else {
+            	        dto.setPrice(0.0);
+            	    }
+            	}
+
+            	dto.setCurrency("USD");
+            	dto.setFeatures(features);
 
                 seatDTOs.add(dto);
             }
