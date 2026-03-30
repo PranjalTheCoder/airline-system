@@ -109,4 +109,38 @@ public class SeatMapMapper {
 
         return response;
     }
+    public SeatDTO toSeatDTO(Seat seat) {
+
+        SeatDTO dto = new SeatDTO();
+
+        dto.setId(seat.getSeatNumber());
+        dto.setSeatNumber(seat.getSeatNumber());
+
+        dto.setRow(seat.getRowNum());
+        dto.setColumn(seat.getColumnLetter());
+
+        dto.setStatus(
+            seat.getSeatStatus() != null ? seat.getSeatStatus() : "AVAILABLE"
+        );
+
+        dto.setType(
+            seat.getSeatType() != null ? seat.getSeatType() : "STANDARD"
+        );
+
+        dto.setPrice(
+            seat.getPrice() != null ? seat.getPrice() : 0.0
+        );
+
+        dto.setCurrency("USD");
+
+        List<String> features = new ArrayList<>();
+
+        if ("WINDOW".equals(seat.getSeatType())) {
+            features.add("WINDOW");
+        }
+
+        dto.setFeatures(features);
+
+        return dto;
+    }
 }

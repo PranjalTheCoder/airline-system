@@ -10,15 +10,19 @@ export class InventoryService {
   private base = environment.inventoryUrl;
 
   getSeatMap(flightId: string, cabinClass: string): Observable<SeatMap> {
-    return this.http.get<SeatMap>(`${this.base}/seat-map/${flightId}`, {
-      params: { cabinClass }
+    // UPDATED: Calls /seatmap with both flightId and cabinClass as query parameters
+    return this.http.get<SeatMap>(`${this.base}/seatmap`, {
+      params: {
+        flightId: flightId,
+        cabinClass: cabinClass,
+      },
     });
   }
 
   lockSeat(flightId: string, seatId: string): Observable<{ success: boolean }> {
     return this.http.post<{ success: boolean }>(
       `${this.base}/seats/${seatId}/lock`,
-      { flightId }
+      { flightId },
     );
   }
 

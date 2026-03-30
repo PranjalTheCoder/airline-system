@@ -34,11 +34,14 @@ public class AdminClient {
 
     public AirportDTO getAirport(String code) {
         try {
-        	return webClient.get()
+        	 System.out.println("Calling airport API for: " + code);
+        	AirportDTO res = webClient.get()
                     .uri("/api/admin/airports/" + code)
                     .retrieve()
                     .bodyToMono(AirportDTO.class)
                     .block();
+        	System.out.println("Response: " + res);
+        	return res;
         } catch(Exception e) {
         	System.out.println("ERROR CALLING AIRPORT API: " + e.getMessage());
             return null;

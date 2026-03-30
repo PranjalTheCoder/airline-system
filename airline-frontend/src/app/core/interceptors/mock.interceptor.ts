@@ -68,8 +68,11 @@ export class MockInterceptor implements HttpInterceptor {
       url.includes('/api/flights/airports') ||
       (url.endsWith('/api/flights') && method === 'GET');
 
+    // 3. NEW: Add Inventory Bypass
+    const isLiveInventoryRoute = url.includes('/api/inventory');
+
     // 3. Let both Admin and Flight routes pass through to the Gateway
-    if (isLiveAdminRoute || isLiveFlightRoute) {
+    if (isLiveAdminRoute || isLiveFlightRoute || isLiveInventoryRoute) {
       return next.handle(req); // Forward to Gateway (localhost:8080)
     }
 

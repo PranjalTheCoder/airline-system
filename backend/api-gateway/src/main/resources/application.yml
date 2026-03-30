@@ -7,11 +7,25 @@ spring:
 
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
       routes:
         - id: admin-service
           uri: lb://ADMIN-SERVICE
           predicates:
             - Path=/api/admin/**
+
         - id: flight-service
           uri: lb://FLIGHT-SERVICE
           predicates:
@@ -25,3 +39,4 @@ eureka:
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
+  

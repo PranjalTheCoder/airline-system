@@ -863,9 +863,9 @@ export class AdminDashboardComponent implements OnInit {
     if (!q) return this.flights();
     return this.flights().filter(
       (f) =>
-        f.flightNumber.toLowerCase().includes(q) ||
-        f.origin.code.toLowerCase().includes(q) ||
-        f.destination.code.toLowerCase().includes(q),
+        f.flightNumber?.toLowerCase().includes(q) ||
+        f.origin?.code?.toLowerCase().includes(q) ||
+        f.destination?.code?.toLowerCase().includes(q),
     );
   };
 
@@ -890,14 +890,33 @@ export class AdminDashboardComponent implements OnInit {
         this.loading.set(false);
       },
     });
-    // ── 2. LIVE FLIGHT CALL (Calls your flight-service via environment.flightUrl) ──
-    this.http.get<any>(environment.flightUrl).subscribe({
+    // ── 2. LIVE FLIGHT CALL (WITH CACHE-BUSTER) ──
+    // ✅ FIX: Use this.base to ensure exact pathing, and add ?_t=Date.now() to bypass stuck 404 caches
+    this.http.get<any>(`${this.base}/flights?_t=${Date.now()}`).subscribe({
       next: (d) => {
         // Bulletproof array extraction
-        const flightList = Array.isArray(d) ? d : d.flights || [];
+        const flightList = Array.isArray(d) ? d : d?.flights || [];
         this.flights.set(flightList);
       },
       error: (err) => console.error('Flights Data Error:', err),
+    });
+
+    // ── 3. LIVE AIRCRAFT CALL (Calls admin-service) ──
+    this.http.get<any[]>(`${this.base}/admin/aircraft`).subscribe({
+      next: (d) => this.aircraft.set(d),
+      error: (err) => console.error('Aircraft Data Error:', err),
+    });
+
+    // ── 4. LIVE AIRPORTS CALL (Calls admin-service) ──
+    this.http.get<any[]>(`${this.base}/admin/airports`).subscribe({
+      next: (d) => this.airports.set(d),
+      error: (err) => console.error('Airports Data Error:', err),
+    });
+
+    // ── 5. LIVE CREW CALL (Calls admin-service) ──
+    this.http.get<any[]>(`${this.base}/admin/crew`).subscribe({
+      next: (d) => this.crews.set(d),
+      error: (err) => console.error('Crew Data Error:', err),
     });
   }
 

@@ -33,7 +33,7 @@ public class Seat {
 
     @Column(name = "seat_status")
     private String seatStatus;
-
+    @Column(nullable=false)
     private Double price;
 
     private String currency = "INR";
