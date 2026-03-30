@@ -107,8 +107,15 @@ public class SeatGeneratorService {
                     seat.setSeatType("STANDARD");
 
                 seat.setSeatStatus("AVAILABLE");
-
-                seat.setSeatMap(seatMap);
+                
+                if (seat.getSeatType().equals("WINDOW"))
+                    seat.setPrice(800.0);
+                else if (seat.getSeatType().equals("AISLE"))
+                    seat.setPrice(500.0);
+                else
+                    seat.setPrice(300.0);
+                
+                seat.setCurrency("INR");                seat.setSeatMap(seatMap);
                 seat.setRow(row);
 
                 seatRepo.save(seat);
