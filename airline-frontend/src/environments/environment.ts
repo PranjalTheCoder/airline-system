@@ -3,7 +3,7 @@ export const environment = {
   useMock: true, // ← flip to false when real backend is running
   apiUrl: '/api',
   authUrl: '/api/auth',
-  flightUrl: 'http://localhpost:8080/api/flights',
+  flightUrl: '/api/flights',
   inventoryUrl: '/api/inventory',
   reservationUrl: '/api/reservations',
   paymentUrl: '/api/payments',
