@@ -28,7 +28,7 @@ export class InventoryService {
 
   lockSeat(flightId: string, seatId: string): Observable<{ success: boolean }> {
     return this.http.post<{ success: boolean }>(
-      `${this.base}/seats/${seatId}/lock`,
+      `${this.base}/seats/${seatId}/lock?flightId=${flightId}`,
       { flightId },
     );
   }

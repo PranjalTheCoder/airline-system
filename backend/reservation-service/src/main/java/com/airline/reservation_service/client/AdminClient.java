@@ -3,22 +3,21 @@ package com.airline.reservation_service.client;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-
 @Component
-public class FlightClient {
+public class AdminClient {
 
     private final WebClient webClient;
 
-    public FlightClient(WebClient.Builder builder) {
+    public AdminClient(WebClient.Builder builder) {
         this.webClient = builder
-                .baseUrl("http://FLIGHT-SERVICE")
+                .baseUrl("http://ADMIN-SERVICE")
                 .build();
     }
 
-    public String getFlight(String flightId) {
+    public String getAircraft(String aircraftId) {
 
         return webClient.get()
-                .uri("/api/flights/" + flightId)
+                .uri("/api/admin/aircraft/" + aircraftId)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();

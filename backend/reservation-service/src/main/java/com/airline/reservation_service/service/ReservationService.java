@@ -1,163 +1,211 @@
 package com.airline.reservation_service.service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.airline.reservation_service.dto.CreatePnrRequest;
-import com.airline.reservation_service.dto.PassengerDTO;
-import com.airline.reservation_service.dto.PnrResponseDTO;
-import com.airline.reservation_service.dto.SegmentDTO;
-import com.airline.reservation_service.entity.ItinerarySegment;
-import com.airline.reservation_service.entity.Pnr;
-import com.airline.reservation_service.entity.PnrContact;
-import com.airline.reservation_service.entity.PnrPassenger;
-import com.airline.reservation_service.repository.ContactRepository;
+import com.airline.reservation_service.client.AdminClient;
+import com.airline.reservation_service.client.FlightClient;
+import com.airline.reservation_service.client.InventoryClient;
+import com.airline.reservation_service.dto.request.PassengerRequestDTO;
+import com.airline.reservation_service.dto.request.ReservationRequestDTO;
+import com.airline.reservation_service.dto.response.PassengerResponseDTO;
+import com.airline.reservation_service.dto.response.PricingDTO;
+import com.airline.reservation_service.dto.response.ReservationResponseDTO;
+import com.airline.reservation_service.dto.response.TaxDTO;
+import com.airline.reservation_service.entity.PassengerEntity;
+import com.airline.reservation_service.entity.PricingEntity;
+import com.airline.reservation_service.entity.ReservationEntity;
+import com.airline.reservation_service.entity.TaxEntity;
+import com.airline.reservation_service.mapper.PassengerMapper;
+import com.airline.reservation_service.mapper.PricingMapper;
+import com.airline.reservation_service.mapper.ReservationMapper;
+import com.airline.reservation_service.mapper.TaxMapper;
 import com.airline.reservation_service.repository.PassengerRepository;
-import com.airline.reservation_service.repository.PnrRepository;
-import com.airline.reservation_service.repository.SegmentRepository;
+import com.airline.reservation_service.repository.PricingRepository;
+import com.airline.reservation_service.repository.ReservationRepository;
+import com.airline.reservation_service.repository.TaxRepository;
 
 @Service
 public class ReservationService {
 
-    private final PnrRepository repo;
+    private final ReservationRepository reservationRepo;
     private final PassengerRepository passengerRepo;
-    private final SegmentRepository segmentRepo;
-    private final ContactRepository contactRepo;
+    private final PricingRepository pricingRepo;
+    private final TaxRepository taxRepo;
 
-    public ReservationService(PnrRepository repo, 
-    			PassengerRepository passengerRepo, 
-    			SegmentRepository segmentRepo, ContactRepository contactRepo) {
-        this.repo = repo;
+    private final FlightClient flightClient;
+    private final InventoryClient inventoryClient;
+    private final AdminClient adminClient;
+
+    private final ReservationMapper reservationMapper;
+    private final PassengerMapper passengerMapper;
+    private final PricingMapper pricingMapper;
+    private final TaxMapper taxMapper;
+
+    private final PricingService pricingService;
+    private final PnrService pnrService;
+
+    public ReservationService(
+            ReservationRepository reservationRepo,
+            PassengerRepository passengerRepo,
+            PricingRepository pricingRepo,
+            TaxRepository taxRepo,
+            FlightClient flightClient,
+            InventoryClient inventoryClient,
+            AdminClient adminClient,
+            ReservationMapper reservationMapper,
+            PassengerMapper passengerMapper,
+            PricingMapper pricingMapper,
+            TaxMapper taxMapper,
+            PricingService pricingService,
+            PnrService pnrService
+    ) {
+        this.reservationRepo = reservationRepo;
         this.passengerRepo = passengerRepo;
-        this.segmentRepo = segmentRepo;
-        this.contactRepo = contactRepo;
+        this.pricingRepo = pricingRepo;
+        this.taxRepo = taxRepo;
+        this.flightClient = flightClient;
+        this.inventoryClient = inventoryClient;
+        this.adminClient = adminClient;
+        this.reservationMapper = reservationMapper;
+        this.passengerMapper = passengerMapper;
+        this.pricingMapper = pricingMapper;
+        this.taxMapper = taxMapper;
+        this.pricingService = pricingService;
+        this.pnrService = pnrService;
     }
 
-    public Pnr createPnr(CreatePnrRequest req){
+    // 🔥 CREATE RESERVATION
+    public ReservationResponseDTO createReservation(ReservationRequestDTO request) {
 
-        // 1. Create PNR
-        Pnr pnr = new Pnr();
-        pnr.setPnrCode(UUID.randomUUID().toString().substring(0,6));
-        pnr.setBookingStatus("HOLD");
-        pnr.setCreatedAt(LocalDateTime.now());
-        pnr.setCreatedBy(1L); // temp user
+        // 1. Validate via other services
+        flightClient.getFlight(request.getFlightId());
+        inventoryClient.getSeatMap(request.getFlightId());
+        adminClient.getAircraft("AC001");
 
-        Pnr savedPnr = repo.save(pnr);
+        // 2. Generate PNR
+        String pnr = pnrService.generate();
 
-        // ================= PASSENGERS =================
-        if (req.getPassengers() != null) {
-            for (PassengerDTO dto : req.getPassengers()) {
+        // 3. Map Reservation
+        ReservationEntity reservation = reservationMapper.toEntity(request, pnr);
+        reservationRepo.save(reservation);
 
-                PnrPassenger p = new PnrPassenger();
-                p.setPassengerId(dto.getPassengerId());
-                p.setPassengerType(dto.getPassengerType());
-                p.setPnr(savedPnr);
+        // 4. Map Passengers
+        List<PassengerEntity> passengerEntities = new ArrayList<>();
 
-                passengerRepo.save(p);
-            }
+        for (int i = 0; i < request.getPassengers().size(); i++) {
+            PassengerRequestDTO p = request.getPassengers().get(i);
+            String seat = request.getSelectedSeats().get(i);
+
+            PassengerEntity entity =
+                    passengerMapper.toEntity(p, reservation.getId(), seat);
+
+            passengerEntities.add(entity);
         }
 
-        // ================= SEGMENTS =================
-        if (req.getSegments() != null) {
-            for (SegmentDTO dto : req.getSegments()) {
+        passengerRepo.saveAll(passengerEntities);
 
-                ItinerarySegment s = new ItinerarySegment();
-                s.setFlightInstanceId(dto.getFlightInstanceId());
-                s.setFareClassId(dto.getFareClassId());
-                s.setSegmentStatus("HOLD");
-                s.setPnr(savedPnr);
+        // 5. Pricing
+        PricingDTO pricingDTO = pricingService.calculate(request);
 
-                segmentRepo.save(s);
-            }
+        PricingEntity pricingEntity =
+                pricingMapper.toEntity(pricingDTO, reservation.getId());
+
+        pricingRepo.save(pricingEntity);
+
+        // 6. Taxes
+        List<TaxEntity> taxEntities = new ArrayList<>();
+
+        for (TaxDTO taxDTO : pricingDTO.getTaxes()) {
+            taxEntities.add(
+                    taxMapper.toEntity(taxDTO, pricingEntity.getId())
+            );
         }
 
-        // ================= CONTACT =================
-        if (req.getContact() != null) {
+        taxRepo.saveAll(taxEntities);
 
-            PnrContact c = new PnrContact();
-            c.setEmail(req.getContact().getEmail());
-            c.setPhone(req.getContact().getPhone());
-            c.setPnr(savedPnr);
+        // 7. Build response
+        List<PassengerResponseDTO> passengerResponses =
+                passengerEntities.stream()
+                        .map(passengerMapper::toDTO)
+                        .toList();
 
-            contactRepo.save(c);
-        }
+        PricingDTO finalPricing =
+                pricingMapper.toDTO(pricingEntity, pricingDTO.getTaxes());
 
-        return savedPnr;
+        return reservationMapper.toDTO(
+                reservation,
+                passengerResponses,
+                finalPricing
+        );
     }
 
-    public List<Pnr> getAll(){
-        return repo.findAll();
+    // 🔹 BASIC GET
+    public ReservationResponseDTO getReservationById(String id) {
+
+        ReservationEntity entity = reservationRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+
+        return reservationMapper.toDTO(entity, null, null);
     }
 
-    public Pnr getByCode(String code){
-        return repo.findByPnrCode(code).orElseThrow();
-    }
-    
-    public PnrResponseDTO getPnrDetails(String code){
+    // 🔥 FULL API (IMPORTANT)
+    public ReservationResponseDTO getFullReservation(String id) {
 
-        Pnr pnr = repo.findByPnrCode(code).orElseThrow();
+        // 1. Reservation
+        ReservationEntity reservation = reservationRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Not found"));
 
-        PnrResponseDTO dto = new PnrResponseDTO();
+        // 2. Passengers
+        List<PassengerEntity> passengers =
+                passengerRepo.findByReservationId(id);
 
-        dto.setPnrCode(pnr.getPnrCode());
-        dto.setBookingStatus(pnr.getBookingStatus());
+        // 3. Pricing
+        PricingEntity pricing =
+                pricingRepo.findByReservationId(id);
 
-        // temporary user
-        dto.setCreatedBy(1L);
+        // 4. Taxes
+        List<TaxEntity> taxes =
+                taxRepo.findByPricingId(pricing.getId());
 
-        // 🔥 amount (dummy for now)
-//        dto.setTotalAmount(5000.0);
+        // 5. Map
+        List<PassengerResponseDTO> passengerDTOs =
+                passengers.stream()
+                        .map(passengerMapper::toDTO)
+                        .toList();
 
-        // ✅ passengers
-        List<PnrPassenger> passengers = passengerRepo.findByPnrId(pnr.getId());
+        List<TaxDTO> taxDTOs =
+                taxes.stream()
+                        .map(taxMapper::toDTO)
+                        .toList();
 
-        List<PassengerDTO> passengerDTOs = passengers.stream().map(p -> {
-            PassengerDTO d = new PassengerDTO();
-            d.setPassengerId(p.getPassengerId());
-            d.setPassengerType(p.getPassengerType());
-            return d;
-        }).collect(Collectors.toList());
+        PricingDTO pricingDTO =
+                pricingMapper.toDTO(pricing, taxDTOs);
 
-        dto.setPassengers(passengerDTOs);
-
-        // ✅ segments
-        List<ItinerarySegment> segments = segmentRepo.findByPnrId(pnr.getId());
-
-        List<SegmentDTO> segmentDTOs = segments.stream().map(s -> {
-            SegmentDTO d = new SegmentDTO();
-            d.setFlightInstanceId(s.getFlightInstanceId());
-            d.setFareClassId(s.getFareClassId());
-            return d;
-        }).collect(Collectors.toList());
-
-        dto.setSegments(segmentDTOs);
-
-        return dto;
+        return reservationMapper.toDTO(
+                reservation,
+                passengerDTOs,
+                pricingDTO
+        );
     }
 
-    public Pnr update(String code, Pnr update){
-        Pnr p = getByCode(code);
-        p.setBookingStatus(update.getBookingStatus());
-        return repo.save(p);
+    public ReservationResponseDTO getByPnr(String pnr) {
+
+        ReservationEntity entity = reservationRepo.findByPnr(pnr)
+                .orElseThrow(() -> new RuntimeException("Not found"));
+
+        return reservationMapper.toDTO(entity, null, null);
     }
 
-    public void cancel(String code){
-        Pnr p = getByCode(code);
-        p.setBookingStatus("CANCELLED");
-        repo.save(p);
-    }
+    public List<ReservationResponseDTO> getByUser(String userId) {
 
-    public void confirm(String code){
-        Pnr p = getByCode(code);
-        p.setBookingStatus("CONFIRMED");
-        repo.save(p);
-    }
+        List<ReservationEntity> list =
+                reservationRepo.findByUserId(userId);
 
-    public List<Pnr> getByStatus(String status){
-        return repo.findByBookingStatus(status);
+        return list.stream()
+                .map(e -> reservationMapper.toDTO(e, null, null))
+                .toList();
     }
 }

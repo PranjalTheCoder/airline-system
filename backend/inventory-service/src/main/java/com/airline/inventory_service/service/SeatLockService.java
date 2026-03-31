@@ -15,10 +15,15 @@ public class SeatLockService {
 	}
 
 	 // ✅ HOLD SEAT
-    public String holdSeat(String flightId, String seatId, String userId) {
+    public String lockSeat(String flightId, String seatId) {
 
+    	System.out.println("Lock request → flight: " + flightId + " seat: " + seatId);
+    	
         Seat seat = seatRepo.findBySeatNumber(seatId)
                 .orElseThrow(() -> new RuntimeException("Seat not found"));
+        
+        System.out.println("Seat found → status: " + seat.getSeatStatus());
+
 
         // 🔥 VALIDATION
         if (!"AVAILABLE".equals(seat.getSeatStatus())) {
@@ -38,6 +43,11 @@ public class SeatLockService {
         Seat seat = seatRepo.findBySeatNumber(seatId)
                 .orElseThrow(() -> new RuntimeException("Seat not found"));
 
+     // 🔥 OPTIONAL VALIDATION
+        if (!"HELD".equals(seat.getSeatStatus())) {
+            throw new RuntimeException("Seat is not locked");
+        }
+        
         seat.setSeatStatus("AVAILABLE");
         seatRepo.save(seat);
 

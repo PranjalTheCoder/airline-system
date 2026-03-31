@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,14 +16,13 @@ import com.airline.inventory_service.client.AdminClient;
 import com.airline.inventory_service.dto.AircraftDTO;
 import com.airline.inventory_service.dto.SeatDTO;
 import com.airline.inventory_service.dto.SeatMapResponseDTO;
-import com.airline.inventory_service.dto.SeatRequest;
 import com.airline.inventory_service.entity.Seat;
 import com.airline.inventory_service.mapper.SeatMapMapper;
 import com.airline.inventory_service.repository.SeatRepository;
 import com.airline.inventory_service.service.SeatLockService;
 import com.airline.inventory_service.service.SeatMapAggregationService;
 
-@CrossOrigin(origins = "http://localhost:4200")
+
 @RestController
 @RequestMapping("/api/inventory")
 public class InventoryController {
@@ -100,31 +98,29 @@ public class InventoryController {
         return dto;
     }
 
-    // 🎯 2. SELECT / HOLD SEAT
-    @PostMapping("/seats/select")
-    public Map<String, String> selectSeat(@RequestBody SeatRequest request) {
+    // 🔒 LOCK SEAT
+    @PostMapping("/seats/{seatId}/lock")
+    public Map<String, Object> lockSeat(
+            @PathVariable String seatId,
+            @RequestParam String flightId) {
 
-        String msg = seatLockService.holdSeat(
-                request.getFlightId(),
-                request.getSeatId(),
-                request.getUserId()
-        );
+        seatLockService.lockSeat(flightId, seatId);
 
         return Map.of(
-                "status", "SUCCESS",
-                "message", msg
+                "success", true,
+                "message", "Seat locked successfully"
         );
     }
 
-    // ❌ 3. RELEASE SEAT
-    @PostMapping("/seats/release")
-    public Map<String, String> releaseSeat(@RequestBody SeatRequest request) {
+    // 🔓 RELEASE SEAT
+    @DeleteMapping("/seats/{seatId}/lock")
+    public Map<String, Object> releaseSeat(@PathVariable String seatId) {
 
-        String msg = seatLockService.releaseSeat(request.getSeatId());
+        seatLockService.releaseSeat(seatId);
 
         return Map.of(
-                "status", "SUCCESS",
-                "message", msg
+                "success", true,
+                "message", "Seat released successfully"
         );
     }
 
