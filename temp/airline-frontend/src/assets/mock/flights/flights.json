@@ -1,0 +1,149 @@
+{
+  "flights": [
+    {
+      "id": "FL001",
+      "flightNumber": "SW101",
+      "airline": "SkyWay Airlines",
+      "airlineCode": "SW",
+      "aircraftType": "Boeing 787-9",
+      "origin": { "code": "JFK", "name": "John F Kennedy International", "city": "New York", "country": "USA", "timezone": "America/New_York" },
+      "destination": { "code": "LHR", "name": "London Heathrow", "city": "London", "country": "UK", "timezone": "Europe/London" },
+      "departureTime": "2026-04-15T08:30:00",
+      "arrivalTime": "2026-04-15T20:45:00",
+      "durationMinutes": 435,
+      "stops": 0,
+      "status": "SCHEDULED",
+      "gate": "B12",
+      "terminal": "T4",
+      "amenities": ["Wi-Fi", "In-flight entertainment", "USB charging", "Meal service"],
+      "cabinClasses": [
+        { "type": "ECONOMY", "basePrice": 580, "currency": "USD", "availableSeats": 142, "totalSeats": 210, "baggage": { "cabin": "1 x 7kg", "checked": "1 x 23kg" } },
+        { "type": "PREMIUM_ECONOMY", "basePrice": 1240, "currency": "USD", "availableSeats": 28, "totalSeats": 48, "baggage": { "cabin": "2 x 7kg", "checked": "2 x 23kg" } },
+        { "type": "BUSINESS", "basePrice": 3800, "currency": "USD", "availableSeats": 12, "totalSeats": 42, "baggage": { "cabin": "2 x 10kg", "checked": "2 x 32kg" } },
+        { "type": "FIRST", "basePrice": 8900, "currency": "USD", "availableSeats": 4, "totalSeats": 8, "baggage": { "cabin": "Unlimited", "checked": "3 x 32kg" } }
+      ]
+    },
+    {
+      "id": "FL002",
+      "flightNumber": "SW204",
+      "airline": "SkyWay Airlines",
+      "airlineCode": "SW",
+      "aircraftType": "Airbus A380",
+      "origin": { "code": "JFK", "name": "John F Kennedy International", "city": "New York", "country": "USA", "timezone": "America/New_York" },
+      "destination": { "code": "LHR", "name": "London Heathrow", "city": "London", "country": "UK", "timezone": "Europe/London" },
+      "departureTime": "2026-04-15T14:15:00",
+      "arrivalTime": "2026-04-16T02:30:00",
+      "durationMinutes": 435,
+      "stops": 0,
+      "status": "SCHEDULED",
+      "gate": "A7",
+      "terminal": "T4",
+      "amenities": ["Wi-Fi", "Bar", "Shower (First)", "In-flight entertainment", "Meal service"],
+      "cabinClasses": [
+        { "type": "ECONOMY", "basePrice": 490, "currency": "USD", "availableSeats": 289, "totalSeats": 399, "baggage": { "cabin": "1 x 7kg", "checked": "1 x 23kg" } },
+        { "type": "PREMIUM_ECONOMY", "basePrice": 1050, "currency": "USD", "availableSeats": 42, "totalSeats": 56, "baggage": { "cabin": "2 x 7kg", "checked": "2 x 23kg" } },
+        { "type": "BUSINESS", "basePrice": 3200, "currency": "USD", "availableSeats": 22, "totalSeats": 76, "baggage": { "cabin": "2 x 10kg", "checked": "2 x 32kg" } },
+        { "type": "FIRST", "basePrice": 7500, "currency": "USD", "availableSeats": 3, "totalSeats": 14, "baggage": { "cabin": "Unlimited", "checked": "3 x 32kg" } }
+      ]
+    },
+    {
+      "id": "FL003",
+      "flightNumber": "SW315",
+      "airline": "SkyWay Airlines",
+      "airlineCode": "SW",
+      "aircraftType": "Boeing 737-800",
+      "origin": { "code": "JFK", "name": "John F Kennedy International", "city": "New York", "country": "USA", "timezone": "America/New_York" },
+      "destination": { "code": "LHR", "name": "London Heathrow", "city": "London", "country": "UK", "timezone": "Europe/London" },
+      "departureTime": "2026-04-15T22:00:00",
+      "arrivalTime": "2026-04-16T11:20:00",
+      "durationMinutes": 440,
+      "stops": 1,
+      "status": "SCHEDULED",
+      "gate": "C3",
+      "terminal": "T2",
+      "amenities": ["Wi-Fi", "In-flight entertainment", "Snack service"],
+      "cabinClasses": [
+        { "type": "ECONOMY", "basePrice": 320, "currency": "USD", "availableSeats": 158, "totalSeats": 162, "baggage": { "cabin": "1 x 7kg", "checked": "1 x 23kg" } },
+        { "type": "BUSINESS", "basePrice": 1800, "currency": "USD", "availableSeats": 8, "totalSeats": 12, "baggage": { "cabin": "2 x 10kg", "checked": "2 x 32kg" } }
+      ]
+    },
+    {
+      "id": "FL004",
+      "flightNumber": "SW442",
+      "airline": "SkyWay Airlines",
+      "airlineCode": "SW",
+      "aircraftType": "Airbus A350-900",
+      "origin": { "code": "DXB", "name": "Dubai International", "city": "Dubai", "country": "UAE", "timezone": "Asia/Dubai" },
+      "destination": { "code": "BOM", "name": "Chhatrapati Shivaji Maharaj International", "city": "Mumbai", "country": "India", "timezone": "Asia/Kolkata" },
+      "departureTime": "2026-04-16T02:10:00",
+      "arrivalTime": "2026-04-16T07:40:00",
+      "durationMinutes": 210,
+      "stops": 0,
+      "status": "DELAYED",
+      "gate": "D14",
+      "terminal": "T3",
+      "amenities": ["Wi-Fi", "Meal service", "USB charging"],
+      "cabinClasses": [
+        { "type": "ECONOMY", "basePrice": 240, "currency": "USD", "availableSeats": 265, "totalSeats": 300, "baggage": { "cabin": "1 x 7kg", "checked": "1 x 23kg" } },
+        { "type": "BUSINESS", "basePrice": 1200, "currency": "USD", "availableSeats": 18, "totalSeats": 40, "baggage": { "cabin": "2 x 10kg", "checked": "2 x 32kg" } }
+      ]
+    },
+    {
+      "id": "FL005",
+      "flightNumber": "SW558",
+      "airline": "SkyWay Airlines",
+      "airlineCode": "SW",
+      "aircraftType": "Boeing 777-300ER",
+      "origin": { "code": "SIN", "name": "Changi Airport", "city": "Singapore", "country": "Singapore", "timezone": "Asia/Singapore" },
+      "destination": { "code": "SYD", "name": "Kingsford Smith Airport", "city": "Sydney", "country": "Australia", "timezone": "Australia/Sydney" },
+      "departureTime": "2026-04-17T09:45:00",
+      "arrivalTime": "2026-04-17T20:15:00",
+      "durationMinutes": 510,
+      "stops": 0,
+      "status": "SCHEDULED",
+      "gate": "F22",
+      "terminal": "T1",
+      "amenities": ["Wi-Fi", "Bar", "Meal service", "In-flight entertainment", "USB charging"],
+      "cabinClasses": [
+        { "type": "ECONOMY", "basePrice": 680, "currency": "USD", "availableSeats": 198, "totalSeats": 304, "baggage": { "cabin": "1 x 7kg", "checked": "1 x 23kg" } },
+        { "type": "PREMIUM_ECONOMY", "basePrice": 1400, "currency": "USD", "availableSeats": 34, "totalSeats": 48, "baggage": { "cabin": "2 x 7kg", "checked": "2 x 23kg" } },
+        { "type": "BUSINESS", "basePrice": 4200, "currency": "USD", "availableSeats": 14, "totalSeats": 48, "baggage": { "cabin": "2 x 10kg", "checked": "2 x 32kg" } }
+      ]
+    },
+    {
+      "id": "FL006",
+      "flightNumber": "SW677",
+      "airline": "SkyWay Airlines",
+      "airlineCode": "SW",
+      "aircraftType": "Airbus A321neo",
+      "origin": { "code": "CDG", "name": "Charles de Gaulle Airport", "city": "Paris", "country": "France", "timezone": "Europe/Paris" },
+      "destination": { "code": "NRT", "name": "Narita International Airport", "city": "Tokyo", "country": "Japan", "timezone": "Asia/Tokyo" },
+      "departureTime": "2026-04-18T11:20:00",
+      "arrivalTime": "2026-04-19T07:50:00",
+      "durationMinutes": 750,
+      "stops": 0,
+      "status": "SCHEDULED",
+      "gate": "G9",
+      "terminal": "T2E",
+      "amenities": ["Wi-Fi", "Meal service", "In-flight entertainment"],
+      "cabinClasses": [
+        { "type": "ECONOMY", "basePrice": 890, "currency": "USD", "availableSeats": 145, "totalSeats": 180, "baggage": { "cabin": "1 x 7kg", "checked": "1 x 23kg" } },
+        { "type": "BUSINESS", "basePrice": 3600, "currency": "USD", "availableSeats": 9, "totalSeats": 20, "baggage": { "cabin": "2 x 10kg", "checked": "2 x 32kg" } }
+      ]
+    }
+  ],
+  "airports": [
+    { "code": "JFK", "name": "John F Kennedy International", "city": "New York", "country": "USA" },
+    { "code": "LHR", "name": "London Heathrow", "city": "London", "country": "UK" },
+    { "code": "DXB", "name": "Dubai International", "city": "Dubai", "country": "UAE" },
+    { "code": "BOM", "name": "Chhatrapati Shivaji", "city": "Mumbai", "country": "India" },
+    { "code": "SIN", "name": "Changi Airport", "city": "Singapore", "country": "Singapore" },
+    { "code": "SYD", "name": "Kingsford Smith", "city": "Sydney", "country": "Australia" },
+    { "code": "CDG", "name": "Charles de Gaulle", "city": "Paris", "country": "France" },
+    { "code": "NRT", "name": "Narita International", "city": "Tokyo", "country": "Japan" },
+    { "code": "LAX", "name": "Los Angeles International", "city": "Los Angeles", "country": "USA" },
+    { "code": "ORD", "name": "O'Hare International", "city": "Chicago", "country": "USA" },
+    { "code": "DEL", "name": "Indira Gandhi International", "city": "New Delhi", "country": "India" },
+    { "code": "HKG", "name": "Hong Kong International", "city": "Hong Kong", "country": "China" }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "account": {
+    "passengerId": "USR001",
+    "loyaltyNumber": "SW-FF-123456",
+    "tier": "GOLD",
+    "points": 42850,
+    "milesFlown": 68400,
+    "tierProgress": 68,
+    "nextTier": "PLATINUM",
+    "pointsToNextTier": 7150,
+    "expiryDate": "2027-12-31",
+    "joinDate": "2021-03-15"
+  },
+  "tiers": [
+    { "name": "BLUE",     "minMiles": 0,      "maxMiles": 24999,  "benefits": ["Priority check-in"],                                              "color": "#6B7280" },
+    { "name": "SILVER",   "minMiles": 25000,  "maxMiles": 49999,  "benefits": ["Priority check-in", "Lounge access (1 guest)", "Bonus miles 25%"], "color": "#9CA3AF" },
+    { "name": "GOLD",     "minMiles": 50000,  "maxMiles": 74999,  "benefits": ["All Silver benefits", "Upgrade priority", "Bonus miles 50%"],      "color": "#D4AF37" },
+    { "name": "PLATINUM", "minMiles": 75000,  "maxMiles": 999999, "benefits": ["All Gold benefits", "Suite upgrades", "Bonus miles 100%", "Dedicated concierge"], "color": "#60A5FA" }
+  ],
+  "transactions": [
+    { "id": "TXN001", "date": "2026-03-20", "description": "SW101 JFK-LHR", "type": "EARNED", "points": 1450, "balance": 42850 },
+    { "id": "TXN002", "date": "2026-02-14", "description": "Upgrade redemption BOM-DXB", "type": "REDEEMED", "points": -8000, "balance": 41400 },
+    { "id": "TXN003", "date": "2026-01-05", "description": "SW558 SIN-SYD", "type": "EARNED", "points": 2100, "balance": 49400 },
+    { "id": "TXN004", "date": "2025-12-20", "description": "Bonus promotion", "type": "BONUS", "points": 5000, "balance": 47300 }
+  ],
+  "rewards": [
+    { "id": "RWD001", "name": "Economy Upgrade", "description": "Upgrade one sector to Premium Economy", "points": 8000, "category": "UPGRADE", "available": true },
+    { "id": "RWD002", "name": "Business Upgrade", "description": "Upgrade one sector to Business Class", "points": 20000, "category": "UPGRADE", "available": true },
+    { "id": "RWD003", "name": "Extra Baggage 23kg", "description": "Add one extra checked bag", "points": 3000, "category": "BAGGAGE", "available": true },
+    { "id": "RWD004", "name": "Lounge Pass", "description": "Single entry SkyWay Lounge", "points": 5000, "category": "LOUNGE", "available": true },
+    { "id": "RWD005", "name": "Free Short Haul", "description": "One free economy ticket under 4 hours", "points": 35000, "category": "FLIGHT", "available": false }
+  ]
+}

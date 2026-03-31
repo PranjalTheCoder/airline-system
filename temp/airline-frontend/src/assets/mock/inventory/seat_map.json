@@ -1,0 +1,78 @@
+{
+  "seatMaps": [
+    {
+      "flightId": "FL001",
+      "aircraft": "Boeing 787-9",
+      "cabinClass": "ECONOMY",
+      "rows": [
+        {
+          "rowNumber": 10, "isExitRow": false,
+          "seats": [
+            { "id": "10A", "seatNumber": "10A", "row": 10, "column": "A", "status": "AVAILABLE", "type": "WINDOW", "price": 25, "currency": "USD", "features": ["WINDOW"] },
+            { "id": "10B", "seatNumber": "10B", "row": 10, "column": "B", "status": "OCCUPIED", "type": "STANDARD", "price": 0, "currency": "USD", "features": [] },
+            { "id": "10C", "seatNumber": "10C", "row": 10, "column": "C", "status": "AVAILABLE", "type": "AISLE", "price": 20, "currency": "USD", "features": [] },
+            { "id": "10D", "seatNumber": "10D", "row": 10, "column": "D", "status": "AVAILABLE", "type": "AISLE", "price": 20, "currency": "USD", "features": [] },
+            { "id": "10E", "seatNumber": "10E", "row": 10, "column": "E", "status": "OCCUPIED", "type": "STANDARD", "price": 0, "currency": "USD", "features": [] },
+            { "id": "10F", "seatNumber": "10F", "row": 10, "column": "F", "status": "AVAILABLE", "type": "WINDOW", "price": 25, "currency": "USD", "features": ["WINDOW"] }
+          ]
+        },
+        {
+          "rowNumber": 11, "isExitRow": false,
+          "seats": [
+            { "id": "11A", "seatNumber": "11A", "row": 11, "column": "A", "status": "AVAILABLE", "type": "WINDOW", "price": 25, "currency": "USD", "features": ["WINDOW"] },
+            { "id": "11B", "seatNumber": "11B", "row": 11, "column": "B", "status": "AVAILABLE", "type": "STANDARD", "price": 0, "currency": "USD", "features": [] },
+            { "id": "11C", "seatNumber": "11C", "row": 11, "column": "C", "status": "OCCUPIED", "type": "AISLE", "price": 20, "currency": "USD", "features": [] },
+            { "id": "11D", "seatNumber": "11D", "row": 11, "column": "D", "status": "AVAILABLE", "type": "AISLE", "price": 20, "currency": "USD", "features": [] },
+            { "id": "11E", "seatNumber": "11E", "row": 11, "column": "E", "status": "AVAILABLE", "type": "STANDARD", "price": 0, "currency": "USD", "features": [] },
+            { "id": "11F", "seatNumber": "11F", "row": 11, "column": "F", "status": "OCCUPIED", "type": "WINDOW", "price": 25, "currency": "USD", "features": ["WINDOW"] }
+          ]
+        },
+        {
+          "rowNumber": 12, "isExitRow": true,
+          "seats": [
+            { "id": "12A", "seatNumber": "12A", "row": 12, "column": "A", "status": "AVAILABLE", "type": "EXTRA_LEGROOM", "price": 45, "currency": "USD", "features": ["WINDOW", "EXTRA_LEGROOM", "EXIT_ROW"] },
+            { "id": "12B", "seatNumber": "12B", "row": 12, "column": "B", "status": "AVAILABLE", "type": "EXTRA_LEGROOM", "price": 40, "currency": "USD", "features": ["EXTRA_LEGROOM", "EXIT_ROW"] },
+            { "id": "12C", "seatNumber": "12C", "row": 12, "column": "C", "status": "AVAILABLE", "type": "EXTRA_LEGROOM", "price": 40, "currency": "USD", "features": ["EXTRA_LEGROOM", "EXIT_ROW"] },
+            { "id": "12D", "seatNumber": "12D", "row": 12, "column": "D", "status": "AVAILABLE", "type": "EXTRA_LEGROOM", "price": 40, "currency": "USD", "features": ["EXTRA_LEGROOM", "EXIT_ROW"] },
+            { "id": "12E", "seatNumber": "12E", "row": 12, "column": "E", "status": "AVAILABLE", "type": "EXTRA_LEGROOM", "price": 40, "currency": "USD", "features": ["EXTRA_LEGROOM", "EXIT_ROW"] },
+            { "id": "12F", "seatNumber": "12F", "row": 12, "column": "F", "status": "AVAILABLE", "type": "EXTRA_LEGROOM", "price": 45, "currency": "USD", "features": ["WINDOW", "EXTRA_LEGROOM", "EXIT_ROW"] }
+          ]
+        },
+        {
+          "rowNumber": 13, "isExitRow": false,
+          "seats": [
+            { "id": "13A", "seatNumber": "13A", "row": 13, "column": "A", "status": "OCCUPIED", "type": "WINDOW", "price": 25, "currency": "USD", "features": ["WINDOW"] },
+            { "id": "13B", "seatNumber": "13B", "row": 13, "column": "B", "status": "OCCUPIED", "type": "STANDARD", "price": 0, "currency": "USD", "features": [] },
+            { "id": "13C", "seatNumber": "13C", "row": 13, "column": "C", "status": "OCCUPIED", "type": "AISLE", "price": 20, "currency": "USD", "features": [] },
+            { "id": "13D", "seatNumber": "13D", "row": 13, "column": "D", "status": "AVAILABLE", "type": "AISLE", "price": 20, "currency": "USD", "features": [] },
+            { "id": "13E", "seatNumber": "13E", "row": 13, "column": "E", "status": "AVAILABLE", "type": "STANDARD", "price": 0, "currency": "USD", "features": [] },
+            { "id": "13F", "seatNumber": "13F", "row": 13, "column": "F", "status": "AVAILABLE", "type": "WINDOW", "price": 25, "currency": "USD", "features": ["WINDOW"] }
+          ]
+        },
+        {
+          "rowNumber": 14, "isExitRow": false,
+          "seats": [
+            { "id": "14A", "seatNumber": "14A", "row": 14, "column": "A", "status": "AVAILABLE", "type": "WINDOW", "price": 25, "currency": "USD", "features": ["WINDOW"] },
+            { "id": "14B", "seatNumber": "14B", "row": 14, "column": "B", "status": "AVAILABLE", "type": "STANDARD", "price": 0, "currency": "USD", "features": [] },
+            { "id": "14C", "seatNumber": "14C", "row": 14, "column": "C", "status": "BLOCKED", "type": "AISLE", "price": 0, "currency": "USD", "features": [] },
+            { "id": "14D", "seatNumber": "14D", "row": 14, "column": "D", "status": "AVAILABLE", "type": "AISLE", "price": 20, "currency": "USD", "features": [] },
+            { "id": "14E", "seatNumber": "14E", "row": 14, "column": "E", "status": "OCCUPIED", "type": "STANDARD", "price": 0, "currency": "USD", "features": [] },
+            { "id": "14F", "seatNumber": "14F", "row": 14, "column": "F", "status": "AVAILABLE", "type": "WINDOW", "price": 25, "currency": "USD", "features": ["WINDOW"] }
+          ]
+        },
+        {
+          "rowNumber": 15, "isExitRow": false,
+          "seats": [
+            { "id": "15A", "seatNumber": "15A", "row": 15, "column": "A", "status": "AVAILABLE", "type": "PREMIUM", "price": 65, "currency": "USD", "features": ["WINDOW", "RECLINE"] },
+            { "id": "15B", "seatNumber": "15B", "row": 15, "column": "B", "status": "OCCUPIED", "type": "PREMIUM", "price": 60, "currency": "USD", "features": ["RECLINE"] },
+            { "id": "15C", "seatNumber": "15C", "row": 15, "column": "C", "status": "AVAILABLE", "type": "PREMIUM", "price": 60, "currency": "USD", "features": ["RECLINE"] },
+            { "id": "15D", "seatNumber": "15D", "row": 15, "column": "D", "status": "AVAILABLE", "type": "PREMIUM", "price": 60, "currency": "USD", "features": ["RECLINE"] },
+            { "id": "15E", "seatNumber": "15E", "row": 15, "column": "E", "status": "AVAILABLE", "type": "PREMIUM", "price": 60, "currency": "USD", "features": ["RECLINE"] },
+            { "id": "15F", "seatNumber": "15F", "row": 15, "column": "F", "status": "AVAILABLE", "type": "PREMIUM", "price": 65, "currency": "USD", "features": ["WINDOW", "RECLINE"] }
+          ]
+        }
+      ],
+      "legend": { "available": "Available", "occupied": "Occupied", "selected": "Selected", "premium": "Premium / Extra Legroom" }
+    }
+  ]
+}

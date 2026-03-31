@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { catchError, map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { SeatMap } from '../../../core/models';
 
@@ -10,13 +10,20 @@ export class InventoryService {
   private base = environment.inventoryUrl;
 
   getSeatMap(flightId: string, cabinClass: string): Observable<SeatMap> {
+    const params = new HttpParams()
+      .set('flightId', flightId)
+      .set('cabinClass', cabinClass);
     // UPDATED: Calls /seatmap with both flightId and cabinClass as query parameters
-    return this.http.get<SeatMap>(`${this.base}/seatmap`, {
-      params: {
-        flightId: flightId,
-        cabinClass: cabinClass,
-      },
-    });
+    return this.http.get<any>(`${this.base}/seatmap`, { params }).pipe(
+      map((response) => {
+        // Bulletproof parsing: If Java wraps the response in {"seatMap": {...}} or just returns it directly
+        return response?.seatMap || response?.data || response;
+      }),
+      catchError((err) => {
+        console.error('Seat Map API Error:', err);
+        throw err;
+      }),
+    );
   }
 
   lockSeat(flightId: string, seatId: string): Observable<{ success: boolean }> {
