@@ -459,6 +459,109 @@ public class FlightAggregationService {
         return new FlightSearchResponseDTO(response);
     }
 
+    public FlightDTO getFlightById(Long flightId) {
 
+        // 1. Get Flight
+        FlightEntity flight = flightService.getFlightById(flightId);
+
+        if (flight == null) {
+            throw new RuntimeException("Flight not found: " + flightId);
+        }
+
+        // 2. Get Route
+        RouteEntity route = routeService.getRouteById(flight.getRouteId());
+
+        if (route == null) {
+            throw new RuntimeException("Route not found for flight");
+        }
+
+        // 3. Get Instance (latest or first)
+        List<FlightInstanceEntity> instances =
+                instanceService.getInstances(flight.getId());
+
+        if (instances == null || instances.isEmpty()) {
+            throw new RuntimeException("No flight instances found");
+        }
+
+        FlightInstanceEntity instance = instances.get(0);
+
+        // 4. Build DTO
+        FlightDTO dto = new FlightDTO();
+
+        dto.setId(String.valueOf(instance.getId()));
+        dto.setFlightNumber(flight.getFlightNumber());
+
+        // 5. Airline
+        AirlineEntity airline = airlineService.getAirline(flight.getAirlineId());
+        if (airline != null) {
+            dto.setAirline(airline.getName());
+            dto.setAirlineCode(airline.getAirlineCode());
+        }
+
+        // 6. Aircraft
+        dto.setAircraftType(
+                adminClient.getAircraftModel(flight.getAircraftId())
+        );
+
+        // 7. Airports
+        dto.setOrigin(
+                adminClient.getAirport(route.getOriginCode())
+        );
+
+        dto.setDestination(
+                adminClient.getAirport(route.getDestinationCode())
+        );
+
+        // 8. Time
+        dto.setDepartureTime(instance.getDepartureDateTime().toString());
+        dto.setArrivalTime(instance.getArrivalDateTime().toString());
+
+        int duration = (int) java.time.Duration.between(
+                instance.getDepartureDateTime(),
+                instance.getArrivalDateTime()
+        ).toMinutes();
+
+        dto.setDurationMinutes(duration);
+
+        // 9. Other fields
+        dto.setStops(flight.getStops());
+        dto.setStatus(instance.getStatus());
+        dto.setGate(instance.getGate());
+        dto.setTerminal(instance.getTerminal());
+
+        // 10. Amenities
+        dto.setAmenities(
+                amenityService.getAmenitiesByFlightId(flight.getId())
+        );
+
+        // 11. Cabin Classes
+        List<CabinClassEntity> cabins =
+                cabinClassService.getCabinClasses(flight.getId());
+
+        List<CabinClassDTO> cabinDTOs = new ArrayList<>();
+
+        for (CabinClassEntity c : cabins) {
+
+            CabinClassDTO cabinDTO = new CabinClassDTO();
+
+            cabinDTO.setType(c.getClassType());
+            cabinDTO.setBasePrice(c.getBasePrice());
+            cabinDTO.setCurrency(c.getCurrency());
+            cabinDTO.setAvailableSeats(c.getAvailableSeats());
+            cabinDTO.setTotalSeats(c.getTotalSeats());
+
+            BaggageDTO baggage = new BaggageDTO();
+            baggage.setCabin(c.getCabinBaggage());
+            baggage.setChecked(c.getCheckedBaggage());
+
+            cabinDTO.setBaggage(baggage);
+
+            cabinDTOs.add(cabinDTO);
+        }
+
+        dto.setCabinClasses(cabinDTOs);
+
+        return dto;
+    }
 	
 }

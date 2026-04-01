@@ -1,12 +1,17 @@
 package com.airline.reservation_service.controller;
 
-import com.airline.reservation_service.dto.CreatePnrRequest;
-import com.airline.reservation_service.dto.PnrResponseDTO;
-import com.airline.reservation_service.entity.Pnr;
-import com.airline.reservation_service.service.ReservationService;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.airline.reservation_service.dto.request.ReservationRequestDTO;
+import com.airline.reservation_service.dto.response.ReservationResponseDTO;
+import com.airline.reservation_service.service.ReservationService;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -14,52 +19,48 @@ public class ReservationController {
 
     private final ReservationService service;
 
+    // Constructor Injection (NO Lombok)
     public ReservationController(ReservationService service) {
         this.service = service;
     }
-    
-    
 
+    // 🔥 1. CREATE RESERVATION
     @PostMapping
-    public Pnr create(@RequestBody CreatePnrRequest req){
-        return service.createPnr(req);
+    public ReservationResponseDTO createReservation(
+            @RequestBody ReservationRequestDTO request) {
+
+        return service.createReservation(request);
     }
 
-    @GetMapping
-    public List<Pnr> getAll(){
-        return service.getAll();
+    // 🔹 2. GET BASIC RESERVATION BY ID
+    @GetMapping("/{id}")
+    public ReservationResponseDTO getReservationById(
+            @PathVariable String id) {
+
+        return service.getReservationById(id);
     }
 
-    @GetMapping("/{pnr}")
-    public PnrResponseDTO get(@PathVariable String pnr){
-        return service.getPnrDetails(pnr);
+    // 🔥 3. GET FULL RESERVATION (MAIN API)
+    @GetMapping("/full/{id}")
+    public ReservationResponseDTO getFullReservation(
+            @PathVariable String id) {
+
+        return service.getFullReservation(id);
     }
 
-    @PutMapping("/{pnr}")
-    public Pnr update(@PathVariable String pnr, @RequestBody Pnr p){
-        return service.update(pnr, p);
+    // 🔹 4. GET BY PNR
+    @GetMapping("/pnr/{pnr}")
+    public ReservationResponseDTO getByPnr(
+            @PathVariable String pnr) {
+
+        return service.getByPnr(pnr);
     }
 
-    @DeleteMapping("/{pnr}")
-    public String delete(@PathVariable String pnr){
-        service.cancel(pnr);
-        return "CANCELLED";
-    }
+    // 🔹 5. GET ALL RESERVATIONS FOR USER
+    @GetMapping("/user/{userId}")
+    public List<ReservationResponseDTO> getByUser(
+            @PathVariable String userId) {
 
-    @GetMapping("/status/{status}")
-    public List<Pnr> getByStatus(@PathVariable String status){
-        return service.getByStatus(status);
-    }
-
-    @PostMapping("/{pnr}/confirm")
-    public String confirm(@PathVariable String pnr){
-        service.confirm(pnr);
-        return "CONFIRMED";
-    }
-
-    @PostMapping("/{pnr}/cancel")
-    public String cancelBooking(@PathVariable String pnr){
-        service.cancel(pnr);
-        return "CANCELLED";
+        return service.getByUser(userId);
     }
 }

@@ -14,6 +14,7 @@ import com.airline_service.flight_service.client.AdminClient;
 import com.airline_service.flight_service.dto.AirportDTO;
 import com.airline_service.flight_service.dto.AirportListResponseDTO;
 import com.airline_service.flight_service.dto.FlightBasicDTO;
+import com.airline_service.flight_service.dto.FlightDTO;
 import com.airline_service.flight_service.dto.FlightSearchResponseDTO;
 import com.airline_service.flight_service.entity.FlightEntity;
 import com.airline_service.flight_service.service.AirportService;
@@ -78,20 +79,12 @@ public class FlightController {
     }
     
   
-//    // 🔎 BY ID
-//    @GetMapping("/{id}")
-//    public FlightSearchResponseDTO getFlightById(@PathVariable Long id) {
-//
-//        FlightEntity flight = flightService.getFlightById(id);
-//
-//        if (flight == null) {
-//            return new FlightSearchResponseDTO(List.of());
-//        }
-//
-//        RouteEntity route = routeService.getRouteById(flight.getRouteId());
-//
-//        return aggregationService.buildResponse(List.of(flight), route);
-//    }
+    // 🔎 BY ID
+    @GetMapping("/{id}")
+    public FlightDTO getFlightById(@PathVariable Long id) {
+
+       return aggregationService.getFlightById(id);
+    }
 //
 //    // 📅 BY DATE (basic)
 //    @GetMapping("/date")
