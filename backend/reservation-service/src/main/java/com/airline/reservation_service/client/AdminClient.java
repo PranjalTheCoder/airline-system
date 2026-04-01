@@ -10,7 +10,7 @@ public class AdminClient {
 
     public AdminClient(WebClient.Builder builder) {
         this.webClient = builder
-                .baseUrl("http://ADMIN-SERVICE")
+                .baseUrl("http://localhost:8080")
                 .build();
     }
 

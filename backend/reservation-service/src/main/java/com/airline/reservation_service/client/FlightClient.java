@@ -3,6 +3,8 @@ package com.airline.reservation_service.client;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.airline.reservation_service.dto.external.FlightDTO;
+
 
 @Component
 public class FlightClient {
@@ -11,16 +13,16 @@ public class FlightClient {
 
     public FlightClient(WebClient.Builder builder) {
         this.webClient = builder
-                .baseUrl("http://FLIGHT-SERVICE")
+                .baseUrl("http://localhost:8080")
                 .build();
     }
 
-    public String getFlight(String flightId) {
+    public FlightDTO getFlight(String flightId) {
 
         return webClient.get()
                 .uri("/api/flights/" + flightId)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(FlightDTO.class)
                 .block();
     }
 }

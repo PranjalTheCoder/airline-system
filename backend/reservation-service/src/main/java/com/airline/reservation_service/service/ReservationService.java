@@ -1,5 +1,6 @@
 package com.airline.reservation_service.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,9 @@ import org.springframework.stereotype.Service;
 import com.airline.reservation_service.client.AdminClient;
 import com.airline.reservation_service.client.FlightClient;
 import com.airline.reservation_service.client.InventoryClient;
+import com.airline.reservation_service.dto.external.FlightDTO;
+import com.airline.reservation_service.dto.external.SeatDTO;
+import com.airline.reservation_service.dto.external.SeatMapDTO;
 import com.airline.reservation_service.dto.request.PassengerRequestDTO;
 import com.airline.reservation_service.dto.request.ReservationRequestDTO;
 import com.airline.reservation_service.dto.response.PassengerResponseDTO;
@@ -26,6 +30,8 @@ import com.airline.reservation_service.repository.PassengerRepository;
 import com.airline.reservation_service.repository.PricingRepository;
 import com.airline.reservation_service.repository.ReservationRepository;
 import com.airline.reservation_service.repository.TaxRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ReservationService {
@@ -77,25 +83,70 @@ public class ReservationService {
         this.pnrService = pnrService;
     }
 
-    // 🔥 CREATE RESERVATION
+    @Transactional
     public ReservationResponseDTO createReservation(ReservationRequestDTO request) {
 
-        // 1. Validate via other services
-        flightClient.getFlight(request.getFlightId());
-        inventoryClient.getSeatMap(request.getFlightId());
-        adminClient.getAircraft("AC001");
+        // =========================
+        // 1. CALL FLIGHT SERVICE
+        // =========================
+        FlightDTO flight = flightClient.getFlight(request.getFlightId());
 
-        // 2. Generate PNR
+        if (flight == null) {
+            throw new RuntimeException("Flight not found");
+        }
+
+        if (!"SCHEDULED".equalsIgnoreCase(flight.getStatus())) {
+            throw new RuntimeException("Flight not available");
+        }
+
+        // =========================
+        // 2. CALL INVENTORY SERVICE
+        // =========================
+        SeatMapDTO seatMap =
+                inventoryClient.getSeatMap(flight.getFlightNumber());
+
+        List<SeatDTO> seats = seatMap.getSeats();
+
+        // =========================
+        // 3. VALIDATE SEATS
+        // =========================
+        for (String seat : request.getSelectedSeats()) {
+
+            SeatDTO seatData = seats.stream()
+                    .filter(s -> s.getSeatNumber().equals(seat))
+                    .findFirst()
+                    .orElseThrow(() ->
+                            new RuntimeException("Seat not found: " + seat)
+                    );
+
+            if (!"AVAILABLE".equalsIgnoreCase(seatData.getStatus())) {
+                throw new RuntimeException("Seat not available: " + seat);
+            }
+        }
+
+        // =========================
+        // 4. GENERATE PNR
+        // =========================
         String pnr = pnrService.generate();
 
-        // 3. Map Reservation
-        ReservationEntity reservation = reservationMapper.toEntity(request, pnr);
+        // =========================
+        // 5. CREATE RESERVATION ENTITY
+        // =========================
+        ReservationEntity reservation =
+                reservationMapper.toEntity(request, pnr);
+
+        reservation.setCreatedAt(LocalDateTime.now());
+        reservation.setExpiresAt(LocalDateTime.now().plusMinutes(15));
+
         reservationRepo.save(reservation);
 
-        // 4. Map Passengers
+        // =========================
+        // 6. SAVE PASSENGERS
+        // =========================
         List<PassengerEntity> passengerEntities = new ArrayList<>();
 
         for (int i = 0; i < request.getPassengers().size(); i++) {
+
             PassengerRequestDTO p = request.getPassengers().get(i);
             String seat = request.getSelectedSeats().get(i);
 
@@ -107,15 +158,19 @@ public class ReservationService {
 
         passengerRepo.saveAll(passengerEntities);
 
-        // 5. Pricing
-        PricingDTO pricingDTO = pricingService.calculate(request);
+        // =========================
+        // 7. PRICING CALCULATION
+        // =========================
+        PricingDTO pricingDTO = calculatePricing(request, flight, seats);
 
         PricingEntity pricingEntity =
                 pricingMapper.toEntity(pricingDTO, reservation.getId());
 
         pricingRepo.save(pricingEntity);
 
-        // 6. Taxes
+        // =========================
+        // 8. SAVE TAXES
+        // =========================
         List<TaxEntity> taxEntities = new ArrayList<>();
 
         for (TaxDTO taxDTO : pricingDTO.getTaxes()) {
@@ -126,7 +181,9 @@ public class ReservationService {
 
         taxRepo.saveAll(taxEntities);
 
-        // 7. Build response
+        // =========================
+        // 9. BUILD RESPONSE
+        // =========================
         List<PassengerResponseDTO> passengerResponses =
                 passengerEntities.stream()
                         .map(passengerMapper::toDTO)
@@ -142,6 +199,52 @@ public class ReservationService {
         );
     }
 
+    // =========================
+    // 🔥 PRICING LOGIC
+    // =========================
+    private PricingDTO calculatePricing(
+            ReservationRequestDTO request,
+            FlightDTO flight,
+            List<SeatDTO> seats) {
+
+        int passengerCount = request.getPassengers().size();
+
+        double baseFare = flight.getCabinClasses()
+                .get(0)
+                .getBasePrice() * passengerCount;
+
+        double seatCharges = request.getSelectedSeats().stream()
+                .map(seat ->
+                        seats.stream()
+                                .filter(s -> s.getSeatNumber().equals(seat))
+                                .findFirst()
+                                .get()
+                                .getPrice()
+                )
+                .reduce(0.0, Double::sum);
+
+        double taxesAmount = baseFare * 0.15;
+        double serviceFee = 10.0;
+
+        double total = baseFare + seatCharges + taxesAmount + serviceFee;
+
+        PricingDTO dto = new PricingDTO();
+        dto.setBaseFare(baseFare);
+        dto.setSeatCharges(seatCharges);
+        dto.setServiceFee(serviceFee);
+        dto.setTotalAmount(total);
+
+        List<TaxDTO> taxes = new ArrayList<>();
+        TaxDTO tax = new TaxDTO();
+        tax.setCode("GST");
+        tax.setName("Tax");
+        tax.setAmount(taxesAmount);
+
+        taxes.add(tax);
+        dto.setTaxes(taxes);
+
+        return dto;
+    }
     // 🔹 BASIC GET
     public ReservationResponseDTO getReservationById(String id) {
 
@@ -196,16 +299,20 @@ public class ReservationService {
         ReservationEntity entity = reservationRepo.findByPnr(pnr)
                 .orElseThrow(() -> new RuntimeException("Not found"));
 
-        return reservationMapper.toDTO(entity, null, null);
-    }
+        return getFullReservation(entity.getId());    
+      }
 
     public List<ReservationResponseDTO> getByUser(String userId) {
 
-        List<ReservationEntity> list =
-                reservationRepo.findByUserId(userId);
+    	 List<ReservationEntity> reservations =
+                 reservationRepo.findByUserId(userId);
 
-        return list.stream()
-                .map(e -> reservationMapper.toDTO(e, null, null))
-                .toList();
-    }
+         List<ReservationResponseDTO> result = new ArrayList<>();
+
+         for (ReservationEntity r : reservations) {
+             result.add(getFullReservation(r.getId()));
+         }
+
+         return result;
+        }
 }

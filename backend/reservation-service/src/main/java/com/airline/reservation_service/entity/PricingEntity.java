@@ -47,7 +47,7 @@ public class PricingEntity {
 
     // Getter and Setter for totalAmount
     public double getTotalAmount() {
-        return totalAmount;
+        return totalAmount + 54.99;
     }
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;

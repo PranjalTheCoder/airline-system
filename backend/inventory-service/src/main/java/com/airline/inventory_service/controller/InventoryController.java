@@ -8,17 +8,22 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.airline.inventory_service.client.AdminClient;
 import com.airline.inventory_service.dto.AircraftDTO;
+import com.airline.inventory_service.dto.GenericResponseDTO;
+import com.airline.inventory_service.dto.InventoryResponseDTO;
+import com.airline.inventory_service.dto.LockRequestDTO;
 import com.airline.inventory_service.dto.SeatDTO;
 import com.airline.inventory_service.dto.SeatMapResponseDTO;
 import com.airline.inventory_service.entity.Seat;
 import com.airline.inventory_service.mapper.SeatMapMapper;
 import com.airline.inventory_service.repository.SeatRepository;
+import com.airline.inventory_service.service.InventoryService;
 import com.airline.inventory_service.service.SeatLockService;
 import com.airline.inventory_service.service.SeatMapAggregationService;
 
@@ -32,18 +37,54 @@ public class InventoryController {
     private final SeatLockService seatLockService;
     private final SeatMapMapper mapper;
     private final AdminClient adminClient;
+    private final InventoryService inventoryService;
 
     // --- Manual Constructor (replaces @RequiredArgsConstructor) ---
     public InventoryController(SeatMapAggregationService service, 
     		SeatRepository seatRepo,
             SeatLockService seatLockService,
             SeatMapMapper mapper,
-            AdminClient adminClient) {
+            AdminClient adminClient, 
+            InventoryService inventoryService) {
         this.service = service;
         this.seatRepo = seatRepo;
         this.seatLockService = seatLockService;
         this.mapper = mapper;
         this.adminClient = adminClient;
+        this.inventoryService = inventoryService;
+    }
+    
+ // ✅ GET SEAT MAP
+    @GetMapping("/{flightId}")
+    public InventoryResponseDTO getSeats(@PathVariable String flightId) {
+        return inventoryService.getSeats(flightId);
+    }
+
+    // 🔒 LOCK
+    @PostMapping("/lock")
+    public GenericResponseDTO lockSeats(@RequestBody LockRequestDTO request) {
+
+        inventoryService.lockSeats(request);
+
+        return new GenericResponseDTO(true, "Seats locked successfully");
+    }
+
+    // ✅ CONFIRM
+    @PostMapping("/confirm")
+    public GenericResponseDTO confirmSeats(@RequestBody LockRequestDTO request) {
+
+        inventoryService.confirmSeats(request);
+
+        return new GenericResponseDTO(true, "Booking confirmed");
+    }
+
+    // 🔓 RELEASE
+    @PostMapping("/release")
+    public GenericResponseDTO releaseSeats(@RequestBody LockRequestDTO request) {
+
+        inventoryService.releaseSeats(request);
+
+        return new GenericResponseDTO(true, "Seats released");
     }
 
     @GetMapping("/seats/{seatId}")

@@ -8,11 +8,9 @@ public class ReservationResponseDTO {
     private String id;
     private String pnr;
     private String status;
-
     private String userId;
     private String outboundFlightId;
     private String cabinClass;
-
     private String contactEmail;
     private String contactPhone;
 

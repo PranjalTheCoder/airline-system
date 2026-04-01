@@ -4,6 +4,8 @@ package com.airline.reservation_service.client;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.airline.reservation_service.dto.external.SeatMapDTO;
+
 @Component
 public class InventoryClient {
 
@@ -11,17 +13,17 @@ public class InventoryClient {
 
     public InventoryClient(WebClient.Builder builder) {
         this.webClient = builder
-                .baseUrl("http://INVENTORY-SERVICE")
+                .baseUrl("http://localhost:8080")
                 .build();
     }
 
     // 🔹 Get seat map
-    public String getSeatMap(String flightId) {
+    public SeatMapDTO getSeatMap(String flightNumber) {
 
         return webClient.get()
-                .uri("/api/inventory/" + flightId)
+                .uri("/api/inventory/" + flightNumber)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(SeatMapDTO.class)
                 .block();
     }
 
