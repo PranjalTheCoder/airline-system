@@ -1,0 +1,15 @@
+{
+  "workspace": {
+    "id": "a4ce2624-ac03-4640-86a6-e75e8321b4a2"
+  },
+  "entities": {
+    "environments": [],
+    "flows": [],
+    "globals": [],
+    "mocks": [],
+    "specs": [],
+    "collections": [
+      "..\\Airline-system.postman_collection.json"
+    ]
+  }
+}

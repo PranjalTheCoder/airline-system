@@ -109,3 +109,5 @@ INSERT INTO aircraft (id, registration, model, manufacturer, capacity, cabin_con
 
 
 SELECT * FROM Aircraft;
+SELECT * FROM Airports;
+SELECT * FROM Crew;

@@ -2,6 +2,7 @@ CREATE DATABASE inventory_db;
 
 use inventory_db;
 
+
 CREATE TABLE seat_maps (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
 
@@ -134,5 +135,11 @@ SELECT * FROM seats;
 SELECT * FROM seat_features;
 SELECT * FROM seat_pricing;
 SELECT * FROM seat_status_history;
-
+drop database inventory_db;
 DELETE FROM seat_maps WHERE flight_id = 'ZA503';
+
+DELETE FROM seats;
+DELETE FROM seat_rows;
+DELETE FROM seat_maps;
+
+SELECT * FROM seats WHERE seat_number = '10A';
