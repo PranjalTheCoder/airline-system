@@ -1,10 +1,13 @@
 package com.airline.reservation_service.repository;
 
-import com.airline.reservation_service.entity.PnrPassenger;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 
-public interface PassengerRepository extends JpaRepository<PnrPassenger, Long> {
-    List<PnrPassenger> findByPnrId(Long pnrId);
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.airline.reservation_service.entity.PassengerEntity;
+
+public interface PassengerRepository
+extends JpaRepository<PassengerEntity, String> {
+
+List<PassengerEntity> findByReservationId(String reservationId);
 }

@@ -1,14 +1,40 @@
 package com.airline.reservation_service.client;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "inventory-service", url = "http://localhost:8082")
-public interface InventoryClient {
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 
-    @PostMapping("/api/inventory/{id}/hold")
-    void holdSeat(@PathVariable Long id);
+import com.airline.reservation_service.dto.external.SeatMapDTO;
 
-    @PostMapping("/api/inventory/{id}/release")
-    void releaseSeat(@PathVariable Long id);
+@Component
+public class InventoryClient {
+
+    private final WebClient webClient;
+
+    public InventoryClient(WebClient.Builder builder) {
+        this.webClient = builder
+                .baseUrl("http://localhost:8080")
+                .build();
+    }
+
+    // 🔹 Get seat map
+    public SeatMapDTO getSeatMap(String flightNumber) {
+
+        return webClient.get()
+                .uri("/api/inventory/" + flightNumber)
+                .retrieve()
+                .bodyToMono(SeatMapDTO.class)
+                .block();
+    }
+
+    // 🔥 OPTIONAL: Lock seats (future use)
+    public String lockSeats(String flightId, Object requestBody) {
+
+        return webClient.post()
+                .uri("/api/inventory/lock/" + flightId)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
 }
