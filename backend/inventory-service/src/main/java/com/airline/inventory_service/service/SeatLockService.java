@@ -19,8 +19,9 @@ public class SeatLockService {
 
     	System.out.println("Lock request → flight: " + flightId + " seat: " + seatId);
     	
-        Seat seat = seatRepo.findBySeatNumber(seatId)
-                .orElseThrow(() -> new RuntimeException("Seat not found"));
+    	// FIX: Look up by BOTH seatNumber and flightId
+        Seat seat = seatRepo.findBySeatNumberAndSeatMap_FlightId(seatId, flightId)
+                .orElseThrow(() -> new RuntimeException("Seat not found for this flight"));
         
         System.out.println("Seat found → status: " + seat.getSeatStatus());
 
@@ -37,13 +38,15 @@ public class SeatLockService {
         return "Seat locked successfully";
     }
 
-    // ❌ RELEASE SEAT
-    public String releaseSeat(String seatId) {
+ // ❌ RELEASE SEAT
+    // FIX: Add flightId parameter
+    public String releaseSeat(String flightId, String seatId) {
 
-        Seat seat = seatRepo.findBySeatNumber(seatId)
-                .orElseThrow(() -> new RuntimeException("Seat not found"));
-
-     // 🔥 OPTIONAL VALIDATION
+    	// FIX: Look up by BOTH seatNumber and flightId
+        Seat seat = seatRepo.findBySeatNumberAndSeatMap_FlightId(seatId, flightId)
+                .orElseThrow(() -> new RuntimeException("Seat not found for this flight"));
+    	
+    	// 🔥 OPTIONAL VALIDATION
         if (!"HELD".equals(seat.getSeatStatus())) {
             throw new RuntimeException("Seat is not locked");
         }

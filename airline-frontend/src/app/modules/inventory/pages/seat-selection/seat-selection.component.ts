@@ -1,4 +1,11 @@
-import { Component, inject, signal, OnInit, computed } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  OnInit,
+  computed,
+  OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -607,7 +614,7 @@ import { StepProgressComponent } from '../../../../shared/components/step-progre
     `,
   ],
 })
-export class SeatSelectionComponent implements OnInit {
+export class SeatSelectionComponent implements OnInit, OnDestroy {
   private store = inject(Store);
   private router = inject(Router);
   private inventory = inject(InventoryService);
@@ -680,24 +687,81 @@ export class SeatSelectionComponent implements OnInit {
     if (seat.status !== 'AVAILABLE') return;
 
     if (this.isSelected(seat.id)) {
-      this.selectedSeats.update((s) => s.filter((x) => x.seatId !== seat.id));
+      // this.selectedSeats.update((s) => s.filter((x) => x.seatId !== seat.id));
+      this.releaseSeatSelection(seat.id);
       return;
     }
     if (this.selectedSeats().length >= this.passengerCount()) return;
 
-    this.selectedSeats.update((s) => [
-      ...s,
-      {
-        passengerId: `pax-${s.length}`,
-        seatId: seat.id,
-      },
-    ]);
+    // 2. Lock the seat in the backend
+    const flightId = this.flight()?.flightNumber || this.flight()?.id;
+
+    if (flightId) {
+      // Call backend to lock the seat
+      this.inventory.lockSeat(flightId, seat.id).subscribe({
+        next: (res) => {
+          if (res.success) {
+            // Update UI only after successful backend lock
+            this.selectedSeats.update((s) => [
+              ...s,
+              {
+                passengerId: `pax-${s.length}`,
+                seatId: seat.id,
+              },
+            ]);
+          }
+        },
+        error: (err) => {
+          console.error('Failed to lock seat. It may have been taken.', err);
+          // Optional: Integrate with your ToastService here to show an error to the user
+        },
+      });
+    }
   }
+
+  //   this.selectedSeats.update((s) => [
+  //     ...s,
+  //     {
+  //       passengerId: `pax-${s.length}`,
+  //       seatId: seat.id,
+  //     },
+  //   ]);
+  // }
 
   removeSeat(seatId: string) {
-    this.selectedSeats.update((s) => s.filter((x) => x.seatId !== seatId));
+    // this.selectedSeats.update((s) => s.filter((x) => x.seatId !== seatId));
+    this.releaseSeatSelection(seatId);
   }
 
+  // Helper method to release seat in the backend and update UI
+  // Helper method to release seat in the backend and update UI
+  private releaseSeatSelection(seatId: string) {
+    const flightId = this.flight()?.flightNumber || this.flight()?.id;
+    if (!flightId) return;
+
+    this.inventory.releaseSeat(flightId, seatId).subscribe({
+      next: () => {
+        this.selectedSeats.update((s) => s.filter((x) => x.seatId !== seatId));
+      },
+      error: (err) => {
+        console.error('Failed to release seat', err);
+        this.selectedSeats.update((s) => s.filter((x) => x.seatId !== seatId));
+      },
+    });
+  }
+
+  // If you added ngOnDestroy in the previous step, update it too:
+  ngOnDestroy() {
+    const seatsToRelease = this.selectedSeats();
+    if (seatsToRelease.length > 0 && !this.router.url.includes('/passengers')) {
+      const flightId = this.flight()?.flightNumber || this.flight()?.id;
+      if (flightId) {
+        seatsToRelease.forEach((sel) => {
+          this.inventory.releaseSeat(flightId, sel.seatId).subscribe();
+        });
+      }
+    }
+  }
   formatFeature(f: string): string {
     const map: Record<string, string> = {
       WINDOW: 'Window seat',

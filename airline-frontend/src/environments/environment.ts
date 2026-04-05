@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  useMock: true, // ← flip to false when real backend is running
+  useMock: false, // ← flip to false when real backend is running
   apiUrl: '/api',
   authUrl: '/api/auth',
   flightUrl: '/api/flights',

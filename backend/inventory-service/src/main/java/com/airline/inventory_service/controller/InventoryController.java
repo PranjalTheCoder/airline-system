@@ -153,17 +153,17 @@ public class InventoryController {
         );
     }
 
-    // 🔓 RELEASE SEAT
-    @DeleteMapping("/seats/{seatId}/lock")
-    public Map<String, Object> releaseSeat(@PathVariable String seatId) {
-
-        seatLockService.releaseSeat(seatId);
-
-        return Map.of(
-                "success", true,
-                "message", "Seat released successfully"
-        );
-    }
+//    // 🔓 RELEASE SEAT
+//    @DeleteMapping("/seats/{seatId}/lock")
+//    public Map<String, Object> releaseSeat(@PathVariable String seatId) {
+//
+//        seatLockService.releaseSeat(seatId);
+//
+//        return Map.of(
+//                "success", true,
+//                "message", "Seat released successfully"
+//        );
+//    }
 
     // 📊 4. SEAT AVAILABILITY
     @GetMapping("/availability")
@@ -199,5 +199,18 @@ public class InventoryController {
     public AircraftDTO getLayout(@RequestParam String aircraft) {
 
         return adminClient.getAircraft(aircraft);
+    }
+ // 🔓 RELEASE SEAT
+    @DeleteMapping("/seats/{seatId}/lock")
+    public Map<String, Object> releaseSeat(
+            @PathVariable String seatId,
+            @RequestParam String flightId) { // FIX: Add flightId RequestParam
+
+        seatLockService.releaseSeat(flightId, seatId); // Pass it to the service
+
+        return Map.of(
+                "success", true,
+                "message", "Seat released successfully"
+        );
     }
 }

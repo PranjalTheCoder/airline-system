@@ -17,6 +17,9 @@ export class InventoryService {
     return this.http.get<any>(`${this.base}/seatmap`, { params }).pipe(
       map((response) => {
         // Bulletproof parsing: If Java wraps the response in {"seatMap": {...}} or just returns it directly
+        if (response?.seatMaps && response.seatMaps.length > 0) {
+          return response.seatMaps[0];
+        }
         return response?.seatMap || response?.data || response;
       }),
       catchError((err) => {
@@ -33,7 +36,8 @@ export class InventoryService {
     );
   }
 
-  releaseSeat(seatId: string): Observable<void> {
-    return this.http.delete<void>(`${this.base}/seats/${seatId}/lock`);
+  // Update to require flightId
+  releaseSeat(flightId: string, seatId: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/seats/${seatId}/lock?flightId=${flightId}`);
   }
 }
