@@ -76,6 +76,11 @@ export class MockInterceptor implements HttpInterceptor {
       return next.handle(req); // Forward to Gateway (localhost:8080)
     }
 
+    if (url.includes('/api/tickets') && url.includes('/pdf')) {
+      const blob = new Blob(['PDF mock content'], { type: 'application/pdf' });
+      return of(new HttpResponse({ status: 200, body: blob }));
+    }
+
     // ── Auth ──────────────────────────────────────────────────
     if (url.includes('/api/auth/login') && method === 'POST') {
       return this.respond(this.mockLogin(req.body as any));
