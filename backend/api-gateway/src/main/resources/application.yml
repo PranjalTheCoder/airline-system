@@ -26,6 +26,11 @@ spring:
       routes:
 
         # 🟢 ADMIN SERVICE
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth/**
+
         - id: admin-service
           uri: lb://ADMIN-SERVICE
           predicates:
